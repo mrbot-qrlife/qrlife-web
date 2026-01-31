@@ -6,7 +6,7 @@
 - **What to call them:** MrChris
 - **Pronouns:** *(optional)*
 - **Timezone:** America/New_York
-- **Notes:** 
+- **Notes:** East Coast (Florida)
 
 ## Context
 
