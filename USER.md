@@ -12,6 +12,7 @@
 
 - Owns an app called qrlife.me (QRLife).
 - QRLife includes scam-safety features, including scanning a QR code’s URL to detect whether it points to a malicious/bad-actor website.
+- QRLife does not auto-open scanned websites; it shows you the link first, then you can choose to open it or save it.
 
 *(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)*
 
