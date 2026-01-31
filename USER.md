@@ -10,6 +10,9 @@
 
 ## Context
 
+- Owns an app called qrlife.me (QRLife).
+- QRLife includes scam-safety features, including scanning a QR code’s URL to detect whether it points to a malicious/bad-actor website.
+
 *(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)*
 
 ---
