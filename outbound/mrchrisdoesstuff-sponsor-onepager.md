@@ -15,7 +15,7 @@
 - Instagram (@mrchrisdoesstuff): **149 followers** • **351 posts**
 - X (@MrChris): **65 followers**
 - Partner/collab: **Drone Fanatic (~50k subscribers)**
-- Facebook: **(send screenshot to populate counts)**
+- Facebook (Mrchrisdoesstuff): **248 followers**
 
 Content formats:
 - Short-form (TikTok/Reels/Shorts)
