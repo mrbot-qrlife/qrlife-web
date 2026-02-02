@@ -10,7 +10,7 @@
 - **Rig:** 2016 Thor Challenger, 37 ft (≈32k miles)
 
 ## Audience & Reach (baseline — 2026-02-02)
-- YouTube (@MrChrisDoesStuff): **333 subscribers**
+- YouTube (@MrChrisDoesStuff): **333 subscribers** • **128 videos**
 - TikTok (@mrchrisdoesstuff): **89 followers** • **1,479 likes**
 - Instagram (@mrchrisdoesstuff): **149 followers** • **351 posts**
 - X (@MrChris): **65 followers**
