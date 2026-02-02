@@ -11,8 +11,10 @@
 
 ## Audience & Reach (baseline — 2026-02-02)
 - YouTube (@MrChrisDoesStuff): **333 subscribers**
+- TikTok (@mrchrisdoesstuff): **89 followers** • **1,479 likes**
+- Instagram (@mrchrisdoesstuff): **149 followers** • **351 posts**
 - Partner/collab: **Drone Fanatic (~50k subscribers)**
-- TikTok / Instagram / Facebook / X: **(send screenshots to populate counts)**
+- Facebook / X: **(send screenshots to populate counts)**
 
 Content formats:
 - Short-form (TikTok/Reels/Shorts)
