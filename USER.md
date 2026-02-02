@@ -3,7 +3,7 @@
 *Learn about the person you're helping. Update this as you go.*
 
 - **Name:** Chris
-- **What to call them:** MrChris
+- **What to call them:** MrChris (confirmed preference)
 - **Pronouns:** *(optional)*
 - **Timezone:** America/New_York
 - **Notes:** East Coast (Florida)
