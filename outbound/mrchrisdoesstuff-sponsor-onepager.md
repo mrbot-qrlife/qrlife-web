@@ -9,10 +9,10 @@
 - **Format:** multi-state road trip content + meetups + brand activations
 - **Rig:** 2016 Thor Challenger, 37 ft (≈32k miles)
 
-## Audience & Reach (fill in / I can keep updated)
-- YouTube: **~333 subscribers** (as of early Feb 2026)
+## Audience & Reach (baseline — 2026-02-02)
+- YouTube (@MrChrisDoesStuff): **333 subscribers**
 - Partner/collab: **Drone Fanatic (~50k subscribers)**
-- TikTok / Instagram / Facebook / X: **[add current follower counts]**
+- TikTok / Instagram / Facebook / X: **(send screenshots to populate counts)**
 
 Content formats:
 - Short-form (TikTok/Reels/Shorts)
