@@ -6,7 +6,7 @@
 - **What to call them:** MrChris (confirmed preference)
 - **Pronouns:** *(optional)*
 - **Timezone:** America/New_York
-- **Notes:** East Coast (Florida)
+- **Notes:** East Coast (Florida) — Orlando
 - **Preferred reminders number (WhatsApp):** +13216001200 (keep +16892550013 as backup)
 
 ## Context
