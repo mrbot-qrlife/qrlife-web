@@ -1,0 +1,56 @@
+makerspace_id,name,city,state,country,website,category,priority,route_month_hint,route_region_hint,lat,lon,source_urls,notes_internal
+fami-lab-orlando-fl,FamiLAB,Orlando,FL,US,https://familab.org/,makerspace,A,Mar|Dec,Southeast,,,"makerspace.com/map|hackerspaces.org",Orlando-area anchor; verify guest policy.
+tampa-hackerspace-tampa-fl,Tampa Hackerspace,Tampa,FL,US,https://tampahackerspace.com/,hackerspace,B,Mar|Dec,Southeast,,,hackerspaces.org,Good Gulf/SW FL option.
+red-mountain-makers-birmingham-al,Red Mountain Makers,Birmingham,AL,US,https://www.redmountainmakers.org/,makerspace,B,Mar,Southeast,,,makerspacedir.com,If passing north; check hours.
+huntsville-madlab-huntsville-al,Huntsville MADLAB,Huntsville,AL,US,https://256.madlab.org/,hackerspace,C,Mar,Southeast,,,hackerspaces.org,Good if route flexes north.
+makerspace-gulf-coast-ocean-springs-ms,Makerspace Gulf Coast,Ocean Springs,MS,US,https://www.makerspacegc.org/,makerspace,B,Mar,Gulf,,,makerspacedir.com,Close to MS Gulf Coast base.
+delta-maker-lab-new-orleans-la,The DeltaMaker Lab,New Orleans,LA,US,https://www.deltamakerlab.com/,makerspace,B,Mar,Gulf,,,makerspace.com/map,NOLA option (drive in by CR-V).
+nola-hackerspace-new-orleans-la,NOLA Hackerspace,New Orleans,LA,US,https://nolahackerspace.org/,hackerspace,C,Mar,Gulf,,,hackerspaces.org,Backup NOLA community.
+atx-hackerspace-austin-tx,ATX Hackerspace,Austin,TX,US,https://atxhackerspace.org/,hackerspace,A,Mar,TX,,,"hackerspaces.org|makerspace.com/map",Austin spring anchor adjunct.
+dallas-makerspace-carrollton-tx,Dallas Makerspace,Carrollton,TX,US,https://dallasmakerspace.org/,makerspace,A,Mar|Apr,TX,,,makerspace.com/map,Flagship; great for collabs/meetups.
+houston-makerspace-houston-tx,Houston Makerspace,Houston,TX,US,https://houstonmakerspace.org/,makerspace,B,Mar|Apr,TX,,,makerspace.com/map,Good if swinging SE TX.
+san-antonio-makerspace-san-antonio-tx,San Antonio Makerspace,San Antonio,TX,US,https://alamomakers.org/,makerspace,B,Mar,TX,,,makerspacedir.com,Pair with San Antonio day trip.
+quelab-albuquerque-nm,Quelab,Albuquerque,NM,US,https://quelab.net/,hackerspace,A,Apr,Southwest,,,"hackerspaces.org|makerspace.com/map",Primary NM stop.
+fuse-makerspace-albuquerque-nm,Fuse Makerspace,Albuquerque,NM,US,https://fusemakerspace.org/,makerspace,B,Apr,Southwest,,,makerspace.com/map,If active; verify current status.
+heatsync-labs-mesa-az,HeatSync Labs,Mesa,AZ,US,https://www.heatsynclabs.org/,hackerspace,A,Apr|May,Southwest,,,"hackerspaces.org|makerspace.com/map",Phoenix metro anchor.
+xerocraft-tucson-az,Xerocraft,Tucson,AZ,US,https://xerocraft.org/,makerspace,A,Apr|May,Southwest,,,makerspace.com/map,Tucson anchor.
+syn-shop-henderson-nv,SYN Shop,Henderson,NV,US,https://synshop.org/,hackerspace,B,May,Southwest,,,"hackerspaces.org|makerspace.com/map",Las Vegas area.
+reno-generator-reno-nv,Reno Generator,Reno,NV,US,https://renogenerator.com/,makerspace,B,May,Southwest,,,makerspace.com/map,Reno / Tahoe corridor.
+make-salt-lake-salt-lake-city-ut,Make Salt Lake,Salt Lake City,UT,US,https://makesaltlake.org/,makerspace,A,May,Rockies,,,makerspace.com/map,Strong UT hub.
+make-it-utah-ogden-ut,Make It Ogden,Ogden,UT,US,https://www.makeitogden.org/,makerspace,C,May,Rockies,,,makerspace.com/map,Nice-to-have north of SLC.
+tinkermill-longmont-co,TinkerMill,Longmont,CO,US,https://tinkermill.org/,makerspace,A,May|Jun,Rockies,,,makerspace.com/map,CO flagship makerspace.
+denhac-denver-co,DenHac (Denver Hackerspace),Denver,CO,US,https://denhac.org/,hackerspace,B,May|Jun,Rockies,,,hackerspaces.org,Denver metro option.
+denver-tool-library-denver-co,Denver Tool Library,Denver,CO,US,https://denvertoollibrary.org/,tool_library,B,May|Jun,Rockies,,,Nation of Makers directory,Tool library model; good cross-promo.
+boise-makerspace-boise-id,Boise Makerspace,Boise,ID,US,https://boisemakerspace.org/,makerspace,B,Jun,Rockies,,,makerspace.com/map,ID anchor.
+missoula-makerspace-missoula-mt,Missoula Makerspace,Missoula,MT,US,https://www.missoulamakerspace.org/,makerspace,B,Jul,PNW,,,makerspace.com/map,MT stop.
+bozeman-makerspace-bozeman-mt,Bozeman Makerspace,Bozeman,MT,US,https://bozemanmakerspace.org/,makerspace,B,Jul,PNW,,,makerspace.com/map,MT alternative.
+seattle-makers-seattle-wa,Seattle Makers,Seattle,WA,US,https://seattlemakers.org/,makerspace,A,Jul,PNW,,,makerspace.com/map,Seattle metro.
+seattle-fablab-seattle-wa,Fab Lab Seattle,Seattle,WA,US,https://fablabseattle.org/,fab_lab,B,Jul,PNW,,,Fab Lab directory,Good for education tie-ins.
+bellingham-makerspace-bellingham-wa,Bellingham Makerspace,Bellingham,WA,US,https://bellinghammakerspace.org/,makerspace,B,Jul,PNW,,,makerspace.com/map,North WA.
+adx-portland-portland-or,ADX,Portland,OR,US,https://www.adxportland.com/,community_shop,A,Jul,PNW,,,makerspace.com/map,High-capability shared shop.
+pctrl-portland-or,PCTRL,Portland,OR,US,https://pctrl.org/,makerspace,B,Jul,PNW,,,makerspacedir.com,Alt Portland community.
+noisebridge-san-francisco-ca,Noisebridge,San Francisco,CA,US,https://www.noisebridge.net/,hackerspace,A,Aug,CA,,,hackerspaces.org,SF anchor.
+ace-makerspace-oakland-ca,Ace Makerspace,Oakland,CA,US,https://www.acemakerspace.org/,makerspace,A,Aug,CA,,,makerspace.com/map,East Bay.
+hacker-lab-sacramento-ca,Hacker Lab,Sacramento,CA,US,https://hackerlab.org/,makerspace,B,Aug,CA,,,makerspace.com/map,Sacramento base-camp friendly.
+crash-space-los-angeles-ca,Crash Space,Los Angeles,CA,US,https://www.crashspace.org/,hackerspace,B,Aug,CA,,,hackerspaces.org,LA makers community.
+urban-workshop-costa-mesa-ca,Urban Workshop,Costa Mesa,CA,US,https://www.urbanworkshop.net/,community_shop,A,Aug,CA,,,makerspace.com/map,Orange County; strong tool access.
+san-diego-makerspace-san-diego-ca,San Diego Makerspace,San Diego,CA,US,https://sandiegomakerspace.org/,makerspace,B,Aug,CA,,,makerspace.com/map,San Diego metro.
+twin-cities-maker-minneapolis-mn,Twin Cities Maker,Minneapolis,MN,US,https://tcmaker.org/,makerspace,A,Oct,Midwest,,,makerspace.com/map,Twin Cities anchor (pairs with Snake Discovery).
+hack-factory-minneapolis-mn,The Hack Factory,Minneapolis,MN,US,https://hackfactory.org/,makerspace,B,Oct,Midwest,,,makerspace.com/map,Backup TC.
+sector67-madison-wi,Sector67,Madison,WI,US,https://www.sector67.org/,makerspace,A,Oct,Midwest,,,makerspace.com/map,Madison anchor.
+milwaukee-makerspace-milwaukee-wi,Milwaukee Makerspace,Milwaukee,WI,US,https://milwaukeemakerspace.org/,makerspace,B,Oct,Midwest,,,makerspace.com/map,Milwaukee option.
+i3detroit-ferndale-mi,i3Detroit,Ferndale,MI,US,https://www.i3detroit.org/,makerspace,A,Oct,Midwest,,,makerspace.com/map,Detroit metro.
+omnicorpdetroit-detroit-mi,OmniCorpDetroit,Detroit,MI,US,https://www.omnicorpdetroit.com/,makerspace,B,Oct,Midwest,,,makerspace.com/map,Another Detroit-area option.
+pump-station-one-chicago-il,Pump Station: One,Chicago,IL,US,https://pumpingstationone.org/,hackerspace,A,Oct,Midwest,,,"hackerspaces.org|makerspace.com/map",Chicago anchor (avoid RV downtown).
+cucfablab-champaign-il,Champaign-Urbana Community Fab Lab,Champaign,IL,US,https://cucfablab.org/,fab_lab,B,Oct,Midwest,,,Fab Lab directory,Good downstate IL / I-57 corridor.
+columbus-idea-foundry-columbus-oh,Columbus Idea Foundry,Columbus,OH,US,https://columbusideafoundry.com/,makerspace,A,Nov,Midwest,,,makerspace.com/map,Major Midwest stop.
+hive13-cincinnati-oh,Hive13,Cincinnati,OH,US,https://hive13.org/,hackerspace,B,Nov,Midwest,,,hackerspaces.org,Cincy option.
+lvl1-louisville-ky,LVL1,Louisville,KY,US,https://www.lvl1.org/,hackerspace,B,Nov,Midwest,,,hackerspaces.org,Louisville / KY segment.
+nashville-makerspace-nashville-tn,Nashville Makerspace,Nashville,TN,US,https://nashvillemakerspace.com/,makerspace,B,Nov,Southeast,,,makerspace.com/map,Tennessee anchor.
+splat-space-durham-nc,Splat Space,Durham,NC,US,https://splatspace.org/,makerspace,B,Nov,Southeast,,,makerspace.com/map,Triangle makerspace.
+makerspace-charlotte-charlotte-nc,MakerSpace Charlotte,Charlotte,NC,US,https://makerspacecharlotte.org/,makerspace,B,Nov,Southeast,,,makerspace.com/map,Charlotte area.
+charleston-makerspace-north-charleston-sc,Charleston MakerSpace,North Charleston,SC,US,https://www.charlestonmakerspace.com/,makerspace,B,Nov,Southeast,,,makerspace.com/map,Charleston segment.
+decatur-makers-decatur-ga,Decatur Makers,Decatur,GA,US,https://decaturmakers.org/,makerspace,B,Dec,Southeast,,,makerspace.com/map,Atlanta metro.
+mass-collective-atlanta-ga,MASS Collective,Atlanta,GA,US,https://www.masscollective.org/,makerspace,C,Dec,Southeast,,,Nation of Makers directory,Check current access model.
+placeholder-fargo-nd,Fargo Makerspace (verify),Fargo,ND,US,,makerspace,C,Sep,Midwest,,,"makerspace.com/map|Nation of Makers",Placeholder: identify best ND org.
+placeholder-sioux-falls-sd,Sioux Falls Makerspace (verify),Sioux Falls,SD,US,,makerspace,C,Sep,Midwest,,,"makerspace.com/map|Nation of Makers",Placeholder: identify best SD org.
