@@ -1,25 +1,18 @@
-# CRM (local + share)
+# CRM (local)
 
-**Source of truth:** the Samba share copy:
-- `/home/mrchris/share/openclaw-workspace/outbound/crm/`
+This folder is the source-of-truth CRM for:
+- sponsors/brands
+- people-to-meet ("100 list")
+- events/stops
 
-OpenClaw will sync nightly and will always treat the share CRM as authoritative.
+Send updates via WhatsApp in plain text (or voice). I will append/normalize into these CSVs.
 
 ## Files
 - `sponsors.csv`
 - `people.csv`
 - `events.csv`
-- `influencers.csv`
-- `exports/` (print/import exports like badge vendor lists)
-
-## How to edit
-- Edit the CSVs on the **share** using Google Sheets or Excel (import → edit → export back to CSV).
-- Do not rename the header columns.
 
 ## Status conventions
 - Sponsors: Prospect | Contacted | Warm | Negotiating | Won | Lost | Parked
 - People: Target | Reached Out | Response | Scheduled | Met | Parked
 - Events: Planned | Booked | Attending | Covered | Skipped
-
-## Notes
-- If you and the bot edit the same file at the same time, last write wins. If you’re about to do a big edit, tell the bot “hold CRM updates for 10 minutes.”

@@ -1,0 +1,5 @@
+# OS junk
+.DS_Store
+._*
+
+# Local transcripts/exports can be committed if desired; keep default tracked.

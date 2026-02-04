@@ -9,6 +9,7 @@
 - **Notes:** East Coast (Florida) — Orlando
 - **Preferred reminders number (WhatsApp):** +13216001200 (keep +16892550013 as backup)
 - **Reminder default time:** 9:00 AM (America/New_York) when no time is specified
+- **Outbound email sender name:** MrBot (even though assistant nickname is lilchris)
 
 ## Context
 
