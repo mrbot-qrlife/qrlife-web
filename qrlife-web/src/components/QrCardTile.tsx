@@ -38,13 +38,13 @@ export function QrCardTile({ card }: { card: QrCardSummary }) {
 
         <div className="mt-4 flex items-center justify-between">
           <Link
-            href={`/app/cards/${card.id}`}
+            href={card.id === "demo-1" ? "/app/cards/demo-1/" : "/app/cards/demo-2/"}
             className="inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/15 px-4 py-2"
           >
             Edit
           </Link>
           <Link
-            href={`/app/cards/${card.id}/qr`}
+            href={card.id === "demo-1" ? "/app/cards/demo-1/qr/" : "/app/cards/demo-2/qr/"}
             className="inline-flex items-center gap-2 rounded-xl bg-[color:var(--qrlife-teal)]/90 hover:bg-[color:var(--qrlife-teal)] px-4 py-2 text-slate-950 font-semibold"
           >
             <Download size={16} /> Download QR
