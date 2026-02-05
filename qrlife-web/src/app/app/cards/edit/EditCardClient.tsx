@@ -1,9 +1,11 @@
 'use client';
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
-import { makeId, upsertCard, type SocialKind } from '@/lib/storage';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { getCard, upsertCard, type QrCard, type SocialKind } from '@/lib/storage';
 
 const kinds: Array<{ kind: SocialKind; label: string; placeholder: string }> = [
   { kind: 'facebook', label: 'Facebook', placeholder: 'https://facebook.com/yourpage' },
@@ -15,17 +17,33 @@ const kinds: Array<{ kind: SocialKind; label: string; placeholder: string }> = [
   { kind: 'website', label: 'Website', placeholder: 'https://example.com' },
 ];
 
-export default function NewCard() {
-  const router = useRouter();
-  const id = useMemo(() => makeId(), []);
+export default function EditCardClient() {
+  const sp = useSearchParams();
+  const id = sp.get('id') || '';
 
+  const [card, setCard] = useState<QrCard | null>(null);
   const [active, setActive] = useState(true);
   const [name, setName] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [bio, setBio] = useState('');
   const [links, setLinks] = useState<Array<{ kind: SocialKind; url: string }>>([]);
+
   const [newKind, setNewKind] = useState<SocialKind>('facebook');
   const [newUrl, setNewUrl] = useState('');
+
+  useEffect(() => {
+    if (!id) return;
+    const c = getCard(id);
+    if (!c) return;
+    setCard(c);
+    setActive(c.active);
+    setName(c.name);
+    setJobTitle(c.jobTitle || '');
+    setBio(c.bio || '');
+    setLinks(c.links || []);
+  }, [id]);
+
+  const placeholder = useMemo(() => kinds.find((k) => k.kind === newKind)?.placeholder ?? 'https://...', [newKind]);
 
   function addLink() {
     const url = newUrl.trim();
@@ -46,20 +64,38 @@ export default function NewCard() {
       bio: bio.trim() || undefined,
       active,
       links,
+      createdAt: card?.createdAt,
     });
-    router.push(`/app/cards/edit/?id=${encodeURIComponent(id)}`);
+    alert('Saved');
   }
 
-  const placeholder = kinds.find((k) => k.kind === newKind)?.placeholder ?? 'https://...';
+  if (!id) {
+    return (
+      <div className="min-h-dvh px-5 py-8 max-w-xl mx-auto">
+        <Link href="/app/" className="text-white/70 hover:text-white">← Back</Link>
+        <div className="mt-6 qrlife-card rounded-2xl p-4">Missing card id.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh px-5 py-8 max-w-xl mx-auto">
-      <Link href="/app/" className="text-white/70 hover:text-white">← Back</Link>
-      <h1 className="mt-4 text-2xl font-bold">New QR Card</h1>
+      <div className="flex items-center justify-between">
+        <Link href="/app/" className="text-white/70 hover:text-white">← Back</Link>
+        <Link href={`/app/cards/qr/?id=${encodeURIComponent(id)}`} className="rounded-xl px-3 py-2 bg-white/10 hover:bg-white/15">
+          Download QR
+        </Link>
+      </div>
+
+      <h1 className="mt-4 text-2xl font-bold">Edit QR Card</h1>
+      <div className="text-white/60 text-sm">Local ID: {id}</div>
 
       <div className="mt-5 qrlife-card rounded-2xl overflow-hidden">
         <div className="px-4 py-3 bg-[color:var(--qrlife-purple)] flex items-center justify-between">
-          <div className="font-semibold">My Information</div>
+          <div>
+            <div className="font-semibold">My Information</div>
+            <div className="text-xs text-white/70">QR Cards are dynamic QR codes you can update after printing.</div>
+          </div>
           <button
             onClick={() => setActive((v) => !v)}
             className={`h-6 w-11 rounded-full relative ${active ? 'bg-emerald-400/80' : 'bg-white/20'}`}
@@ -115,7 +151,6 @@ export default function NewCard() {
           </div>
 
           <div className="pt-4 flex items-center justify-end gap-2">
-            <Link href="/app/" className="rounded-xl px-4 py-2 bg-white/10 hover:bg-white/15">Cancel</Link>
             <button onClick={save} className="rounded-xl px-4 py-2 bg-[color:var(--qrlife-teal)] text-slate-950 font-semibold">
               Save
             </button>
@@ -124,7 +159,7 @@ export default function NewCard() {
       </div>
 
       <div className="mt-6 text-xs text-white/60">
-        Safety check status: <span className="text-amber-300">WARN mode</span> (Safe Browsing key not configured yet)
+        Storage: saved in your browser (MVP step). Cloud sync + login coming next.
       </div>
     </div>
   );
