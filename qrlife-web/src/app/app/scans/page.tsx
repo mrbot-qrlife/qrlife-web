@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BottomNav } from "@/components/BottomNav";
 
 const mock = [
   { day: 'Today', scans: 12, clicks: 8 },
@@ -28,6 +29,8 @@ export default function ScansPage() {
       <div className="mt-6 text-xs text-white/60">
         Next: track BOTH scan events (landing on QR Card page) and link click events.
       </div>
+
+      <BottomNav />
     </div>
   );
 }

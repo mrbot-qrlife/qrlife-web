@@ -3,6 +3,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 
 import Link from 'next/link';
+import { BottomNav } from "@/components/BottomNav";
 import { useEffect, useState } from 'react';
 import { QrCardTile } from '@/components/QrCardTile';
 import { loadCards, type QrCard } from '@/lib/storage';
@@ -45,6 +46,8 @@ export default function AppHome() {
       <div className="mt-8 text-xs text-white/50">
         Storage: <span className="text-emerald-300">Saved in your browser</span> (temporary MVP step; cloud sync + login coming next)
       </div>
+
+      <BottomNav />
     </div>
   );
 }

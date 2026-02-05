@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { BottomNav } from "@/components/BottomNav";
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { makeId, upsertCard, type SocialKind } from '@/lib/storage';
@@ -126,6 +127,8 @@ export default function NewCard() {
       <div className="mt-6 text-xs text-white/60">
         Safety check status: <span className="text-amber-300">WARN mode</span> (Safe Browsing key not configured yet)
       </div>
+
+      <BottomNav />
     </div>
   );
 }
