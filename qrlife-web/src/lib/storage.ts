@@ -77,3 +77,20 @@ export function upsertCard(input: Omit<QrCard, 'createdAt' | 'updatedAt' | 'scan
 export function getCard(id: string): QrCard | undefined {
   return loadCards().find((c) => c.id === id);
 }
+
+export function recordLocalScan(id: string) {
+  const cards = loadCards();
+  const i = cards.findIndex((c) => c.id === id);
+  if (i < 0) return;
+
+  const c = cards[i];
+  const updated: QrCard = {
+    ...c,
+    scans: (c.scans ?? 0) + 1,
+    lastScannedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  cards[i] = updated;
+  saveCards(cards);
+}

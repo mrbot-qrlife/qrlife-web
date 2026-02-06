@@ -10,8 +10,9 @@ export default function QrClient() {
   const id = sp.get('id') || '';
   const [dataUrl, setDataUrl] = useState<string>('');
 
-  // Prototype: we don't yet have the real short domain; use the amplify host.
-  const dest = id ? `${window.location.origin}/${id}` : '';
+  // Prototype: we don't yet have the real short domain; use the current host.
+  // Public destination for this card:
+  const dest = id ? `${window.location.origin}/c/${id}` : '';
 
   useEffect(() => {
     if (!id) return;
