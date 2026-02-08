@@ -39,10 +39,10 @@ export function QrCardTile({ card }: { card: QrCardSummary }) {
         <div className="mt-4 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Link
-              href={`/app/cards/edit/?id=${encodeURIComponent(card.id)}`}
+              href={card.id.includes('-') ? `/c/${encodeURIComponent(card.id)}` : `/app/cards/edit/?id=${encodeURIComponent(card.id)}`}
               className="inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/15 px-4 py-2"
             >
-              Edit
+              {card.id.includes('-') ? 'View' : 'Edit'}
             </Link>
             <Link
               href={`/app/cards/stats/?id=${encodeURIComponent(card.id)}`}
@@ -54,7 +54,7 @@ export function QrCardTile({ card }: { card: QrCardSummary }) {
             </Link>
           </div>
           <Link
-            href={`/app/cards/qr/?id=${encodeURIComponent(card.id)}`}
+            href={card.id.includes('-') ? `/app/cards/qr/?slug=${encodeURIComponent(card.id)}` : `/app/cards/qr/?id=${encodeURIComponent(card.id)}`}
             className="inline-flex items-center gap-2 rounded-xl bg-[color:var(--qrlife-teal)]/90 hover:bg-[color:var(--qrlife-teal)] px-4 py-2 text-slate-950 font-semibold"
           >
             <Download size={16} /> Download QR

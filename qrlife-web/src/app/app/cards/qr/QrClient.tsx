@@ -8,16 +8,19 @@ import { useEffect, useState } from 'react';
 export default function QrClient() {
   const sp = useSearchParams();
   const id = sp.get('id') || '';
+  const slug = sp.get('slug') || '';
   const [dataUrl, setDataUrl] = useState<string>('');
 
-  // Prototype: local-only cards (stored in browser) use the /c/local/{id} route.
-  // Once Supabase slugs are live, this should point to /c/{slug}.
-  const dest = id ? `${window.location.origin}/c/local/${id}` : '';
+  const dest = slug
+    ? `${window.location.origin}/c/${slug}`
+    : id
+      ? `${window.location.origin}/c/local/${id}`
+      : '';
 
   useEffect(() => {
-    if (!id) return;
+    if (!dest) return;
     QRCode.toDataURL(dest, { errorCorrectionLevel: 'M', margin: 2, width: 512 }).then(setDataUrl);
-  }, [id, dest]);
+  }, [dest]);
 
   return (
     <div className="min-h-dvh px-5 py-8 max-w-xl mx-auto">
