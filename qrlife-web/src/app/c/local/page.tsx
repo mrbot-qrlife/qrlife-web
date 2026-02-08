@@ -4,16 +4,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Facebook,
-  Instagram,
-  Youtube,
-  Linkedin,
-  Globe,
-  Link2,
-  Twitter,
-  Video,
-} from 'lucide-react';
+import { SocialIcon } from '@/components/SocialIcon';
 import { getCard, recordLocalScan, type QrCard, type SocialKind } from '@/lib/storage';
 
 export default function PublicCardPage({ params }: { params: { id: string } }) {
@@ -53,28 +44,6 @@ export default function PublicCardPage({ params }: { params: { id: string } }) {
     .slice(0, 2)
     .map((s) => s[0]?.toUpperCase())
     .join('');
-
-  function iconFor(kind: SocialKind) {
-    switch (kind) {
-      case 'facebook':
-        return Facebook;
-      case 'instagram':
-        return Instagram;
-      case 'youtube':
-        return Youtube;
-      case 'linkedin':
-        return Linkedin;
-      case 'x':
-        return Twitter;
-      case 'website':
-        return Globe;
-      case 'tiktok':
-        return Video;
-      case 'custom':
-      default:
-        return Link2;
-    }
-  }
 
   return (
     <div className="min-h-dvh px-5 py-10 max-w-xl mx-auto">
@@ -146,7 +115,6 @@ export default function PublicCardPage({ params }: { params: { id: string } }) {
               <div className="space-y-2">
                 {card.links?.length ? (
                   card.links.map((l, idx) => {
-                    const Icon = iconFor(l.kind);
                     return (
                       <a
                         key={idx}
@@ -157,8 +125,8 @@ export default function PublicCardPage({ params }: { params: { id: string } }) {
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className="h-11 w-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
-                              <Icon size={18} className="text-white/80" />
+                            <div className="h-11 w-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0 text-white/85">
+                              <SocialIcon kind={l.kind} size={18} />
                             </div>
                             <div className="min-w-0">
                               <div className="text-xs text-white/60 capitalize">{l.kind}</div>

@@ -1,9 +1,8 @@
-import Link from 'next/link';
-import { supabaseServer } from '@/lib/supabase/server';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-function iconLabel(kind: string) {
-  return kind;
-}
+import Link from 'next/link';
+import { SocialIcon } from '@/components/SocialIcon';
+import { supabaseServer } from '@/lib/supabase/server';
 
 export default async function PublicCardBySlugPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
@@ -83,8 +82,17 @@ export default async function PublicCardBySlugPage({ params }: { params: { slug:
                       rel="noreferrer"
                       className="group block rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-4"
                     >
-                      <div className="text-xs text-white/60 capitalize">{iconLabel(l.kind)}</div>
-                      <div className="font-semibold break-all group-hover:underline">{l.label ?? l.url}</div>
+                      <div className="flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0 text-white/90">
+                          <SocialIcon kind={l.kind} size={18} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-xs text-white/60 capitalize">{l.kind}</div>
+                          <div className="font-semibold truncate group-hover:underline">{l.label ?? l.url}</div>
+                          <div className="text-xs text-white/45 truncate">{l.url}</div>
+                        </div>
+                        <div className="text-white/50 text-xs">↗</div>
+                      </div>
                     </a>
                   ))
                 ) : (

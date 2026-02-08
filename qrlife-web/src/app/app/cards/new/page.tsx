@@ -4,6 +4,7 @@
 
 import Link from 'next/link';
 import { BottomNav } from "@/components/BottomNav";
+import { SocialIcon } from '@/components/SocialIcon';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { makeId, upsertCard, type SocialKind } from '@/lib/storage';
@@ -213,8 +214,16 @@ export default function NewCard() {
             {links.length > 0 && (
               <div className="mt-3 space-y-2 text-sm">
                 {links.map((l, idx) => (
-                  <div key={idx} className="flex items-center justify-between rounded-xl bg-white/5 border border-white/10 px-4 py-3">
-                    <div className="capitalize">{l.kind}</div>
+                  <div key={idx} className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-white/85">
+                        {/* icon */}
+                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 border border-white/10">
+                          <SocialIcon kind={l.kind} size={16} />
+                        </span>
+                      </span>
+                      <div className="capitalize text-white/90">{l.kind}</div>
+                    </div>
                     <div className="text-white/60 truncate max-w-[60%]">{l.url}</div>
                   </div>
                 ))}
