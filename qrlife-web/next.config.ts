@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
+  // NOTE: Once we add a real backend (Supabase) + dynamic public slugs,
+  // we cannot use `output: "export"` (static export).
+  // Deploy as SSR (Vercel / Amplify SSR) instead.
   trailingSlash: true,
   // Allow LAN access to the dev server (so other devices on the network can load /_next/* assets)
   allowedDevOrigins: [

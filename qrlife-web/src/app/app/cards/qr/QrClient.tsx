@@ -10,9 +10,9 @@ export default function QrClient() {
   const id = sp.get('id') || '';
   const [dataUrl, setDataUrl] = useState<string>('');
 
-  // Prototype: we don't yet have the real short domain; use the current host.
-  // Public destination for this card:
-  const dest = id ? `${window.location.origin}/c/${id}` : '';
+  // Prototype: local-only cards (stored in browser) use the /c/local/{id} route.
+  // Once Supabase slugs are live, this should point to /c/{slug}.
+  const dest = id ? `${window.location.origin}/c/local/${id}` : '';
 
   useEffect(() => {
     if (!id) return;
