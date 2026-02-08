@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { BottomNav } from "@/components/BottomNav";
 import { SocialIcon } from '@/components/SocialIcon';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { makeId, upsertCard, type SocialKind } from '@/lib/storage';
 
 async function createCardInSupabase(input: {
@@ -56,6 +56,8 @@ export default function NewCard() {
   const [links, setLinks] = useState<Array<{ kind: SocialKind; url: string }>>([]);
   const [newKind, setNewKind] = useState<SocialKind>('facebook');
   const [kindOpen, setKindOpen] = useState(false);
+  const [kindOpenUp, setKindOpenUp] = useState(false);
+  const kindBtnRef = useRef<HTMLButtonElement | null>(null);
   const [newUrl, setNewUrl] = useState('');
 
   // Draft persistence: prevents losing fields if the page refreshes or remounts.
@@ -230,8 +232,21 @@ export default function NewCard() {
             <div className="mt-2 flex gap-2 items-stretch">
               <div className="relative">
                 <button
+                  ref={kindBtnRef}
                   type="button"
-                  onClick={() => setKindOpen((v) => !v)}
+                  onClick={() => {
+                    const next = !kindOpen;
+                    if (next) {
+                      // Decide whether to open upward based on viewport space
+                      const r = kindBtnRef.current?.getBoundingClientRect();
+                      if (r) {
+                        const spaceBelow = window.innerHeight - r.bottom;
+                        const spaceAbove = r.top;
+                        setKindOpenUp(spaceBelow < 320 && spaceAbove > spaceBelow);
+                      }
+                    }
+                    setKindOpen(next);
+                  }}
                   className="h-full rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 px-3 py-2 inline-flex items-center gap-2"
                   aria-haspopup="listbox"
                   aria-expanded={kindOpen}
@@ -245,7 +260,9 @@ export default function NewCard() {
 
                 {kindOpen && (
                   <div
-                    className="absolute z-10 mt-2 w-56 rounded-2xl overflow-hidden bg-slate-950/90 border border-white/10 shadow-2xl backdrop-blur max-h-64 overflow-auto"
+                    className={`absolute z-10 w-56 rounded-2xl bg-slate-950/90 border border-white/10 shadow-2xl backdrop-blur max-h-80 overflow-y-auto overscroll-contain ${
+                      kindOpenUp ? 'bottom-full mb-2' : 'top-full mt-2'
+                    }`}
                     role="listbox"
                   >
                     {kinds.map((k) => (
