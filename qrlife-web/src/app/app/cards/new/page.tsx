@@ -107,8 +107,18 @@ export default function NewCard() {
   function addLink() {
     const url = normalizeLinkInput(newKind, newUrl);
     if (!url) return;
+
+    // Allow multiple links per network, but prevent exact duplicates.
+    const dup = links.some((l) => l.kind === newKind && l.url === url);
+    if (dup) {
+      alert('That link is already added.');
+      return;
+    }
+
     setLinks((prev) => [...prev, { kind: newKind, url }]);
-    setNewUrl('');
+
+    // Keep the input text so you can tweak it (e.g., add a second FB page).
+    // If you want it to clear instead later, we can add a toggle.
   }
 
   async function save() {
