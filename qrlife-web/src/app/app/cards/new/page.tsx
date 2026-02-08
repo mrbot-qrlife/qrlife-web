@@ -205,7 +205,7 @@ export default function NewCard() {
       <Link href="/app/" className="text-white/70 hover:text-white">← Back</Link>
       <h1 className="mt-4 text-2xl font-bold">New QR Card</h1>
 
-      <div className="mt-5 qrlife-card rounded-2xl overflow-hidden">
+      <div className="mt-5 qrlife-card rounded-2xl">
         <div className="px-4 py-3 bg-[color:var(--qrlife-purple)] flex items-center justify-between">
           <div className="font-semibold">My Information</div>
           <button
@@ -245,7 +245,7 @@ export default function NewCard() {
 
                 {kindOpen && (
                   <div
-                    className="absolute z-10 mt-2 w-56 rounded-2xl overflow-hidden bg-slate-950/90 border border-white/10 shadow-2xl backdrop-blur"
+                    className="absolute z-10 mt-2 w-56 rounded-2xl overflow-hidden bg-slate-950/90 border border-white/10 shadow-2xl backdrop-blur max-h-64 overflow-auto"
                     role="listbox"
                   >
                     {kinds.map((k) => (
