@@ -19,6 +19,8 @@ export type QrCard = {
   createdAt: string;
   updatedAt: string;
   links: Array<{ kind: SocialKind; url: string; label?: string }>;
+  // Local-only for now (browser storage). Used to show on Home.
+  isFavorite?: boolean;
 };
 
 const KEY = 'qrlife.cards.v1';
@@ -65,6 +67,7 @@ export function upsertCard(input: Omit<QrCard, 'createdAt' | 'updatedAt' | 'scan
     createdAt: existing?.createdAt ?? input.createdAt ?? nowIso(),
     updatedAt: nowIso(),
     links: input.links ?? existing?.links ?? [],
+    isFavorite: existing?.isFavorite ?? false,
   };
 
   if (i >= 0) cards[i] = card;
@@ -93,4 +96,21 @@ export function recordLocalScan(id: string) {
 
   cards[i] = updated;
   saveCards(cards);
+}
+
+export function toggleLocalFavorite(id: string): QrCard | undefined {
+  const cards = loadCards();
+  const i = cards.findIndex((c) => c.id === id);
+  if (i < 0) return;
+
+  const c = cards[i];
+  const updated: QrCard = {
+    ...c,
+    isFavorite: !c.isFavorite,
+    updatedAt: new Date().toISOString(),
+  };
+
+  cards[i] = updated;
+  saveCards(cards);
+  return updated;
 }

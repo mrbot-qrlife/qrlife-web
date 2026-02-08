@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BarChart3, Download, ToggleLeft, ToggleRight } from 'lucide-react';
+import { BarChart3, Download, Heart, ToggleLeft, ToggleRight } from 'lucide-react';
 
 export type QrCardSummary = {
   id: string; // local id or cloud slug
@@ -8,9 +8,10 @@ export type QrCardSummary = {
   lastScannedAt?: string;
   active: boolean;
   isCloud?: boolean;
+  isFavorite?: boolean;
 };
 
-export function QrCardTile({ card }: { card: QrCardSummary }) {
+export function QrCardTile({ card, onToggleFavorite }: { card: QrCardSummary; onToggleFavorite?: (id: string) => void }) {
   return (
     <div className="qrlife-card rounded-2xl overflow-hidden">
       <div className="px-4 py-3 bg-[color:var(--qrlife-purple)] flex items-center justify-between">
@@ -21,6 +22,17 @@ export function QrCardTile({ card }: { card: QrCardSummary }) {
           <div className="font-semibold">{card.name}</div>
         </div>
         <div className="flex items-center gap-3">
+          {!card.isCloud && (
+            <button
+              type="button"
+              onClick={() => onToggleFavorite?.(card.id)}
+              className="inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/15 px-2 py-2"
+              aria-label={card.isFavorite ? 'Unfavorite' : 'Favorite'}
+              title={card.isFavorite ? 'Unfavorite' : 'Favorite'}
+            >
+              <Heart size={18} className={card.isFavorite ? 'fill-[color:var(--qrlife-teal)] text-[color:var(--qrlife-teal)]' : 'opacity-80'} />
+            </button>
+          )}
           <span className="text-xs opacity-80">{card.active ? 'Active' : 'Inactive'}</span>
           {card.active ? <ToggleRight className="opacity-90" /> : <ToggleLeft className="opacity-70" />}
         </div>

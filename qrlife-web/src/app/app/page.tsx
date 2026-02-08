@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { BottomNav } from "@/components/BottomNav";
 import { useEffect, useState } from 'react';
 import { QrCardTile } from '@/components/QrCardTile';
-import { loadCards, type QrCard } from '@/lib/storage';
+import { loadCards, toggleLocalFavorite, type QrCard } from '@/lib/storage';
 
 type DbCard = {
   id: string;
@@ -22,8 +22,8 @@ export default function AppHome() {
   const [dbCards, setDbCards] = useState<DbCard[]>([]);
 
   useEffect(() => {
-    // Local fallback list
-    setCards(loadCards());
+    // Local fallback list (Home shows favorites only)
+    setCards(loadCards().filter((c) => !!c.isFavorite));
 
     // Supabase list
     fetch('/api/cards/list')
@@ -76,7 +76,18 @@ export default function AppHome() {
           cards.map((c) => (
             <QrCardTile
               key={c.id}
-              card={{ id: c.id, name: c.name, scans: c.scans, lastScannedAt: c.lastScannedAt, active: c.active }}
+              card={{
+                id: c.id,
+                name: c.name,
+                scans: c.scans,
+                lastScannedAt: c.lastScannedAt,
+                active: c.active,
+                isFavorite: c.isFavorite,
+              }}
+              onToggleFavorite={(id) => {
+                toggleLocalFavorite(id);
+                setCards(loadCards().filter((c) => !!c.isFavorite));
+              }}
             />
           ))
         )}

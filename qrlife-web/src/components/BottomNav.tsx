@@ -7,7 +7,7 @@ import clsx from 'clsx';
 
 const items = [
   { href: '/app/', label: 'Home', icon: Home },
-  { href: '/app/', label: 'QR Cards', icon: QrCode },
+  { href: '/app/cards/', label: 'QR Cards', icon: QrCode },
   { href: '/app/scan/', label: 'Scan', icon: ScanLine },
   { href: '/app/settings/', label: 'Settings', icon: Settings },
 ];
