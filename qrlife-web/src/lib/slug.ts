@@ -15,7 +15,13 @@ export function randomSuffix(len = 4) {
   return out;
 }
 
-export function makeSlug(name: string) {
+// New cards should use a neutral short code slug (privacy-friendly).
+export function makeSlugCode(len = 6) {
+  return randomSuffix(len);
+}
+
+// Legacy helper (name-based) kept for future migration/redirect work.
+export function makeNameSlug(name: string) {
   const base = slugify(name) || 'card';
   return `${base}-${randomSuffix(4)}`;
 }

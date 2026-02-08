@@ -60,6 +60,7 @@ export default function AppHome() {
                   scans: c.scans_count ?? 0,
                   lastScannedAt: c.last_scanned_at,
                   active: c.active,
+                  isCloud: true,
                 }}
               />
             ))}

@@ -3,7 +3,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseServer } from '@/lib/supabase/server';
-import { makeSlug } from '@/lib/slug';
+import { makeSlugCode } from '@/lib/slug';
 
 const BodySchema = z.object({
   name: z.string().min(1).max(120),
@@ -28,9 +28,9 @@ export async function POST(req: Request) {
 
     const sb = supabaseServer();
 
-    // Generate a unique slug (best-effort loop)
-    let slug = makeSlug(body.name);
-    for (let attempt = 0; attempt < 5; attempt++) {
+    // Generate a unique slug code (best-effort loop)
+    let slug = makeSlugCode(6);
+    for (let attempt = 0; attempt < 10; attempt++) {
       const { data: existing } = await sb
         .from('qrlife_cards')
         .select('id')
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
         .maybeSingle();
 
       if (!existing) break;
-      slug = makeSlug(body.name);
+      slug = makeSlugCode(6);
     }
 
     const { data: card, error: cardErr } = await sb
