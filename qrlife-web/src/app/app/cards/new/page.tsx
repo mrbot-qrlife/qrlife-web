@@ -54,8 +54,56 @@ export default function NewCard() {
   const [newKind, setNewKind] = useState<SocialKind>('facebook');
   const [newUrl, setNewUrl] = useState('');
 
+  function normalizeLinkInput(kind: SocialKind, raw: string) {
+    let v = raw.trim();
+    if (!v) return '';
+
+    // Accept bare handles like @mrchris or mrchris
+    if (v.startsWith('@')) v = v.slice(1);
+
+    // If it already looks like a URL, keep it (but add https:// if missing).
+    const hasScheme = /^https?:\/\//i.test(v);
+    const looksLikeDomain = /\./.test(v) || v.includes('/');
+    if (hasScheme) return v;
+
+    // If user pasted a domain/path without scheme, assume https.
+    if (looksLikeDomain && kind !== 'tiktok' && kind !== 'x' && kind !== 'instagram' && kind !== 'youtube' && kind !== 'facebook' && kind !== 'linkedin') {
+      return `https://${v}`;
+    }
+
+    // Kind-based handle expansion
+    switch (kind) {
+      case 'instagram':
+        return `https://instagram.com/${v}`;
+      case 'x':
+        return `https://x.com/${v}`;
+      case 'tiktok':
+        return `https://tiktok.com/@${v}`;
+      case 'youtube':
+        // Accept @handle or channel URL fragment
+        return `https://youtube.com/@${v}`;
+      case 'facebook':
+        return `https://facebook.com/${v}`;
+      case 'linkedin':
+        // default to personal profile
+        return v.startsWith('company/') || v.startsWith('in/')
+          ? `https://linkedin.com/${v}`
+          : `https://linkedin.com/in/${v}`;
+      case 'website':
+        return `https://${v}`;
+      default:
+        return looksLikeDomain ? `https://${v}` : v;
+    }
+  }
+
+  function previewUrl() {
+    const url = normalizeLinkInput(newKind, newUrl);
+    if (!url) return;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
   function addLink() {
-    const url = newUrl.trim();
+    const url = normalizeLinkInput(newKind, newUrl);
     if (!url) return;
     setLinks((prev) => [...prev, { kind: newKind, url }]);
     setNewUrl('');
@@ -140,10 +188,24 @@ export default function NewCard() {
               <input
                 value={newUrl}
                 onChange={(e) => setNewUrl(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addLink();
+                  }
+                }}
                 className="flex-1 rounded-xl bg-white/10 border border-white/10 px-3 py-2"
                 placeholder={placeholder}
               />
-              <button onClick={addLink} className="rounded-xl bg-[color:var(--qrlife-purple)] px-4 py-2">
+              <button
+                type="button"
+                onClick={previewUrl}
+                className="rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 px-4 py-2"
+                title="Open link in a new tab to test"
+              >
+                Test
+              </button>
+              <button type="button" onClick={addLink} className="rounded-xl bg-[color:var(--qrlife-purple)] px-4 py-2">
                 Add
               </button>
             </div>
