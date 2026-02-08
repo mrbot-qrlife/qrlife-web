@@ -53,6 +53,7 @@ export default function NewCard() {
   const [bio, setBio] = useState('');
   const [links, setLinks] = useState<Array<{ kind: SocialKind; url: string }>>([]);
   const [newKind, setNewKind] = useState<SocialKind>('facebook');
+  const [kindOpen, setKindOpen] = useState(false);
   const [newUrl, setNewUrl] = useState('');
 
   function normalizeLinkInput(kind: SocialKind, raw: string) {
@@ -174,18 +175,49 @@ export default function NewCard() {
               <div className="font-semibold">Social Networks</div>
             </div>
 
-            <div className="mt-2 flex gap-2">
-              <select
-                value={newKind}
-                onChange={(e) => setNewKind(e.target.value as SocialKind)}
-                className="rounded-xl bg-white/10 border border-white/10 px-3 py-2"
-              >
-                {kinds.map((k) => (
-                  <option key={k.kind} value={k.kind}>
-                    {k.label}
-                  </option>
-                ))}
-              </select>
+            <div className="mt-2 flex gap-2 items-stretch">
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setKindOpen((v) => !v)}
+                  className="h-full rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 px-3 py-2 inline-flex items-center gap-2"
+                  aria-haspopup="listbox"
+                  aria-expanded={kindOpen}
+                >
+                  <span className="text-white/90">
+                    <SocialIcon kind={newKind} size={16} />
+                  </span>
+                  <span className="text-sm">{kinds.find((k) => k.kind === newKind)?.label ?? newKind}</span>
+                  <span className="text-white/50 text-xs">▾</span>
+                </button>
+
+                {kindOpen && (
+                  <div
+                    className="absolute z-10 mt-2 w-56 rounded-2xl overflow-hidden bg-slate-950/90 border border-white/10 shadow-2xl backdrop-blur"
+                    role="listbox"
+                  >
+                    {kinds.map((k) => (
+                      <button
+                        key={k.kind}
+                        type="button"
+                        onClick={() => {
+                          setNewKind(k.kind);
+                          setKindOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2.5 inline-flex items-center gap-2 hover:bg-white/10 ${
+                          k.kind === newKind ? 'bg-white/10' : ''
+                        }`}
+                      >
+                        <span className="text-white/90">
+                          <SocialIcon kind={k.kind} size={16} />
+                        </span>
+                        <span className="text-sm text-white/90">{k.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <input
                 value={newUrl}
                 onChange={(e) => setNewUrl(e.target.value)}
@@ -193,6 +225,9 @@ export default function NewCard() {
                   if (e.key === 'Enter') {
                     e.preventDefault();
                     addLink();
+                  }
+                  if (e.key === 'Escape') {
+                    setKindOpen(false);
                   }
                 }}
                 className="flex-1 rounded-xl bg-white/10 border border-white/10 px-3 py-2"
