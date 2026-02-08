@@ -1,10 +1,36 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import Link from 'next/link';
 import { BottomNav } from "@/components/BottomNav";
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { makeId, upsertCard, type SocialKind } from '@/lib/storage';
+
+async function createCardInSupabase(input: {
+  name: string;
+  jobTitle?: string;
+  bio?: string;
+  active: boolean;
+  links: Array<{ kind: SocialKind; url: string }>;
+}) {
+  const res = await fetch('/api/cards', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: input.name,
+      jobTitle: input.jobTitle,
+      bio: input.bio,
+      active: input.active,
+      links: input.links,
+    }),
+  });
+  const json = await res.json();
+  if (!res.ok || !json?.ok) throw new Error(json?.error ?? 'Failed to create card');
+  return json.card as { id: string; slug: string };
+}
+
 
 const kinds: Array<{ kind: SocialKind; label: string; placeholder: string }> = [
   { kind: 'facebook', label: 'Facebook', placeholder: 'https://facebook.com/yourpage' },
@@ -35,18 +61,37 @@ export default function NewCard() {
     setNewUrl('');
   }
 
-  function save() {
+  async function save() {
     if (!name.trim()) {
       alert('QR Card Name is required');
       return;
     }
-    upsertCard({
-      id,
+
+    const trimmed = {
       name: name.trim(),
       jobTitle: jobTitle.trim() || undefined,
       bio: bio.trim() || undefined,
       active,
       links,
+    };
+
+    // Try Supabase first (real slugs + public pages)
+    try {
+      const created = await createCardInSupabase(trimmed);
+      router.push(`/c/${encodeURIComponent(created.slug)}`);
+      return;
+    } catch (e: any) {
+      console.warn('Supabase create failed, falling back to local storage:', e);
+    }
+
+    // Fallback: local-only MVP
+    upsertCard({
+      id,
+      name: trimmed.name,
+      jobTitle: trimmed.jobTitle,
+      bio: trimmed.bio,
+      active: trimmed.active,
+      links: trimmed.links,
     });
     router.push(`/app/cards/edit/?id=${encodeURIComponent(id)}`);
   }
