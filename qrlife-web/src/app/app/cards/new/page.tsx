@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { BottomNav } from "@/components/BottomNav";
 import { SocialIcon } from '@/components/SocialIcon';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { makeId, upsertCard, type SocialKind } from '@/lib/storage';
 
 async function createCardInSupabase(input: {
@@ -47,6 +47,8 @@ export default function NewCard() {
   const router = useRouter();
   const id = useMemo(() => makeId(), []);
 
+  const DRAFT_KEY = 'qrlife.newcard.draft.v1';
+
   const [active, setActive] = useState(true);
   const [name, setName] = useState('');
   const [jobTitle, setJobTitle] = useState('');
@@ -55,6 +57,36 @@ export default function NewCard() {
   const [newKind, setNewKind] = useState<SocialKind>('facebook');
   const [kindOpen, setKindOpen] = useState(false);
   const [newUrl, setNewUrl] = useState('');
+
+  // Draft persistence: prevents losing fields if the page refreshes or remounts.
+  useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (typeof d.active === 'boolean') setActive(d.active);
+      if (typeof d.name === 'string') setName(d.name);
+      if (typeof d.jobTitle === 'string') setJobTitle(d.jobTitle);
+      if (typeof d.bio === 'string') setBio(d.bio);
+      if (Array.isArray(d.links)) setLinks(d.links);
+      if (typeof d.newKind === 'string') setNewKind(d.newKind as SocialKind);
+      if (typeof d.newUrl === 'string') setNewUrl(d.newUrl);
+    } catch {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ active, name, jobTitle, bio, links, newKind, newUrl })
+      );
+    } catch {
+      // ignore
+    }
+  }, [active, name, jobTitle, bio, links, newKind, newUrl]);
 
   function normalizeLinkInput(kind: SocialKind, raw: string) {
     let v = raw.trim();
@@ -138,6 +170,11 @@ export default function NewCard() {
     // Try Supabase first (real slugs + public pages)
     try {
       const created = await createCardInSupabase(trimmed);
+      try {
+        window.sessionStorage.removeItem(DRAFT_KEY);
+      } catch {
+        // ignore
+      }
       router.push(`/c/${encodeURIComponent(created.slug)}`);
       return;
     } catch (e: any) {
@@ -153,6 +190,11 @@ export default function NewCard() {
       active: trimmed.active,
       links: trimmed.links,
     });
+    try {
+      window.sessionStorage.removeItem(DRAFT_KEY);
+    } catch {
+      // ignore
+    }
     router.push(`/app/cards/edit/?id=${encodeURIComponent(id)}`);
   }
 
