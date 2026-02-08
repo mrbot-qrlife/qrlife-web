@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import Link from 'next/link';
 import { SocialIcon } from '@/components/SocialIcon';
 import { supabaseServer } from '@/lib/supabase/server';
