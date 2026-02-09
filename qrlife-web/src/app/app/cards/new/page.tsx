@@ -6,31 +6,8 @@ import Link from 'next/link';
 import { BottomNav } from "@/components/BottomNav";
 import { SocialIcon } from '@/components/SocialIcon';
 import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { makeId, upsertCard, type SocialKind } from '@/lib/storage';
-
-async function createCardInSupabase(input: {
-  name: string;
-  jobTitle?: string;
-  bio?: string;
-  active: boolean;
-  links: Array<{ kind: SocialKind; url: string }>;
-}) {
-  const res = await fetch('/api/cards', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: input.name,
-      jobTitle: input.jobTitle,
-      bio: input.bio,
-      active: input.active,
-      links: input.links,
-    }),
-  });
-  const json = await res.json();
-  if (!res.ok || !json?.ok) throw new Error(json?.error ?? 'Failed to create card');
-  return json.card as { id: string; slug: string };
-}
+import { useEffect, useRef, useState } from 'react';
+import { createMyCard, type SocialKind } from '@/lib/cloudCards';
 
 
 const kinds: Array<{ kind: SocialKind; label: string; placeholder: string }> = [
@@ -45,8 +22,6 @@ const kinds: Array<{ kind: SocialKind; label: string; placeholder: string }> = [
 
 export default function NewCard() {
   const router = useRouter();
-  const id = useMemo(() => makeId(), []);
-
   const DRAFT_KEY = 'qrlife.newcard.draft.v1';
 
   const [active, setActive] = useState(true);
@@ -169,35 +144,17 @@ export default function NewCard() {
       links,
     };
 
-    // Try Supabase first (real slugs + public pages)
     try {
-      const created = await createCardInSupabase(trimmed);
+      const created = await createMyCard(trimmed);
       try {
         window.sessionStorage.removeItem(DRAFT_KEY);
       } catch {
         // ignore
       }
-      router.push(`/c/${encodeURIComponent(created.slug)}`);
-      return;
+      router.push(`/app/cards/edit/?id=${encodeURIComponent(created.id)}`);
     } catch (e: any) {
-      console.warn('Supabase create failed, falling back to local storage:', e);
+      alert(e?.message ?? 'Failed to create card');
     }
-
-    // Fallback: local-only MVP
-    upsertCard({
-      id,
-      name: trimmed.name,
-      jobTitle: trimmed.jobTitle,
-      bio: trimmed.bio,
-      active: trimmed.active,
-      links: trimmed.links,
-    });
-    try {
-      window.sessionStorage.removeItem(DRAFT_KEY);
-    } catch {
-      // ignore
-    }
-    router.push(`/app/cards/edit/?id=${encodeURIComponent(id)}`);
   }
 
   const placeholder = kinds.find((k) => k.kind === newKind)?.placeholder ?? 'https://...';

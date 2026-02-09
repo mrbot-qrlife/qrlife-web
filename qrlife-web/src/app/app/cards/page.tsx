@@ -1,19 +1,17 @@
 'use client';
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { BottomNav } from '@/components/BottomNav';
 import { QrCardTile } from '@/components/QrCardTile';
-import { loadCards, toggleLocalFavorite, type QrCard } from '@/lib/storage';
+import { listMyCards, type CloudCard } from '@/lib/cloudCards';
 
 export default function QrCardsPage() {
-  const [cards, setCards] = useState<QrCard[]>([]);
+  const [cards, setCards] = useState<CloudCard[]>([]);
 
   useEffect(() => {
-    setCards(loadCards());
+    listMyCards().then(setCards).catch(() => null);
   }, []);
 
   return (
@@ -21,7 +19,7 @@ export default function QrCardsPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="text-2xl font-bold">QR Cards</div>
-          <div className="text-white/70">All of your cards (favorite the ones you want on Home)</div>
+          <div className="text-white/70">All of your synced cards</div>
         </div>
         <Link href="/app/cards/new/" className="rounded-2xl px-4 py-2 bg-white/10 hover:bg-white/15">
           + Add QR Card
@@ -39,23 +37,16 @@ export default function QrCardsPage() {
               key={c.id}
               card={{
                 id: c.id,
+                slug: c.slug,
                 name: c.name,
-                scans: c.scans,
-                lastScannedAt: c.lastScannedAt,
+                scans: c.scans_count ?? 0,
+                lastScannedAt: c.last_scanned_at ?? undefined,
                 active: c.active,
-                isFavorite: c.isFavorite,
-              }}
-              onToggleFavorite={(id) => {
-                toggleLocalFavorite(id);
-                setCards(loadCards());
+                isCloud: true,
               }}
             />
           ))
         )}
-      </div>
-
-      <div className="mt-8 text-xs text-white/50">
-        Tip: Tap the heart to add/remove from <span className="text-emerald-300">Home</span>.
       </div>
 
       <BottomNav />
