@@ -33,9 +33,14 @@ export default function Settings() {
           <div className="font-medium">{email || 'Loading…'}</div>
         </div>
 
-        <button onClick={signOut} className="rounded-xl px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10">
-          Sign out
-        </button>
+        <div className="flex items-center gap-2">
+          <Link href="/app/admin" className="rounded-xl px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10">
+            Admin
+          </Link>
+          <button onClick={signOut} className="rounded-xl px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10">
+            Sign out
+          </button>
+        </div>
       </div>
 
       <BottomNav />
