@@ -23,17 +23,15 @@ export function QrCardTile({ card, onToggleFavorite }: { card: QrCardSummary; on
           <div className="font-semibold">{card.name}</div>
         </div>
         <div className="flex items-center gap-3">
-          {!card.isCloud && (
-            <button
-              type="button"
-              onClick={() => onToggleFavorite?.(card.id)}
-              className="inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/15 px-2 py-2"
-              aria-label={card.isFavorite ? 'Unfavorite' : 'Favorite'}
-              title={card.isFavorite ? 'Unfavorite' : 'Favorite'}
-            >
-              <Heart size={18} className={card.isFavorite ? 'fill-[color:var(--qrlife-teal)] text-[color:var(--qrlife-teal)]' : 'opacity-80'} />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => onToggleFavorite?.(card.id)}
+            className="inline-flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/15 px-2 py-2"
+            aria-label={card.isFavorite ? 'Unfavorite' : 'Favorite'}
+            title={card.isFavorite ? 'Unfavorite' : 'Favorite'}
+          >
+            <Heart size={18} className={card.isFavorite ? 'fill-[color:var(--qrlife-teal)] text-[color:var(--qrlife-teal)]' : 'opacity-80'} />
+          </button>
           <span className="text-xs opacity-80">{card.active ? 'Active' : 'Inactive'}</span>
           {card.active ? <ToggleRight className="opacity-90" /> : <ToggleLeft className="opacity-70" />}
         </div>

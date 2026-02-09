@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { BottomNav } from '@/components/BottomNav';
 import { QrCardTile } from '@/components/QrCardTile';
-import { listMyCards, type CloudCard } from '@/lib/cloudCards';
+import { listMyCards, toggleMyFavorite, type CloudCard } from '@/lib/cloudCards';
 
 export default function QrCardsPage() {
   const [cards, setCards] = useState<CloudCard[]>([]);
@@ -43,6 +43,13 @@ export default function QrCardsPage() {
                 lastScannedAt: c.last_scanned_at ?? undefined,
                 active: c.active,
                 isCloud: true,
+                isFavorite: !!c.is_favorite,
+              }}
+              onToggleFavorite={async (id) => {
+                const current = cards.find((x) => x.id === id)?.is_favorite ?? false;
+                await toggleMyFavorite(id, !!current);
+                const fresh = await listMyCards();
+                setCards(fresh);
               }}
             />
           ))

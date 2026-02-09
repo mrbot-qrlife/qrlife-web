@@ -12,6 +12,7 @@ create table if not exists public.qrlife_cards (
   job_title text,
   bio text,
   active boolean not null default true,
+  is_favorite boolean not null default false,
   scans_count bigint not null default 0,
   last_scanned_at timestamptz,
   created_at timestamptz not null default now(),

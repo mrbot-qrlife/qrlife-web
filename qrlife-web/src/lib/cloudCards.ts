@@ -19,6 +19,7 @@ export type CloudCard = {
   job_title?: string | null;
   bio?: string | null;
   active: boolean;
+  is_favorite?: boolean;
   scans_count: number;
   last_scanned_at?: string | null;
   created_at: string;
@@ -37,7 +38,7 @@ export async function listMyCards() {
   const userId = await requireUserId();
   const { data, error } = await sb
     .from('qrlife_cards')
-    .select('id,user_id,slug,name,job_title,bio,active,scans_count,last_scanned_at,created_at,updated_at')
+    .select('id,user_id,slug,name,job_title,bio,active,is_favorite,scans_count,last_scanned_at,created_at,updated_at')
     .eq('user_id', userId)
     .order('updated_at', { ascending: false });
 
@@ -50,7 +51,7 @@ export async function getMyCard(cardId: string) {
   const userId = await requireUserId();
   const { data, error } = await sb
     .from('qrlife_cards')
-    .select('id,user_id,slug,name,job_title,bio,active,scans_count,last_scanned_at,created_at,updated_at')
+    .select('id,user_id,slug,name,job_title,bio,active,is_favorite,scans_count,last_scanned_at,created_at,updated_at')
     .eq('id', cardId)
     .eq('user_id', userId)
     .maybeSingle();
@@ -152,4 +153,18 @@ export async function updateMyCard(
   }
 
   return card as CloudCard;
+}
+
+export async function toggleMyFavorite(cardId: string, current: boolean) {
+  const sb = supabaseBrowser();
+  const userId = await requireUserId();
+  const { data, error } = await sb
+    .from('qrlife_cards')
+    .update({ is_favorite: !current })
+    .eq('id', cardId)
+    .eq('user_id', userId)
+    .select('id,is_favorite')
+    .single();
+  if (error) throw error;
+  return data as { id: string; is_favorite: boolean };
 }
