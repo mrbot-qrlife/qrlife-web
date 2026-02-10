@@ -62,3 +62,37 @@ export function buildWifiPayload(wifi: WifiInput) {
   if (wifi.hidden) pieces.push('H:true');
   return `WIFI:${pieces.join(';')};;`;
 }
+
+export type WifiFrame = 'classic' | 'rounded' | 'minimal' | 'bold';
+
+export function encodeWifiMeta(input: { payload: string; frame: WifiFrame }) {
+  return `QRLIFE_WIFI|frame=${input.frame}|payload=${encodeURIComponent(input.payload)}`;
+}
+
+export function decodeWifiMeta(value?: string | null) {
+  if (!value?.startsWith('QRLIFE_WIFI|')) return null;
+  const parts = value.split('|').slice(1);
+  const map = new Map<string, string>();
+  for (const p of parts) {
+    const [k, ...rest] = p.split('=');
+    if (!k) continue;
+    map.set(k, rest.join('='));
+  }
+  const payload = map.get('payload');
+  const frame = map.get('frame') as WifiFrame | undefined;
+  if (!payload || !frame) return null;
+  return { payload: decodeURIComponent(payload), frame };
+}
+
+export function encodeUrlForwardMeta(destinationUrl: string) {
+  return `QRLIFE_URL_FORWARD|dest=${encodeURIComponent(destinationUrl)}`;
+}
+
+export function decodeUrlForwardMeta(value?: string | null) {
+  if (!value?.startsWith('QRLIFE_URL_FORWARD|')) return null;
+  const [, raw] = value.split('dest=');
+  if (!raw) return null;
+  const destinationUrl = decodeURIComponent(raw);
+  if (!isValidAbsoluteHttpUrl(destinationUrl)) return null;
+  return { destinationUrl };
+}

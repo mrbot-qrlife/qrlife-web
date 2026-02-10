@@ -8,7 +8,7 @@ import { SocialIcon } from '@/components/SocialIcon';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { createMyCard, type SocialKind } from '@/lib/cloudCards';
-import { buildWifiPayload, isValidAbsoluteHttpUrl, type QrType } from '@/lib/qrCreate';
+import { buildWifiPayload, encodeUrlForwardMeta, encodeWifiMeta, isValidAbsoluteHttpUrl, type QrType, type WifiFrame } from '@/lib/qrCreate';
 
 const types: Array<{ type: QrType; label: string; desc: string }> = [
   { type: 'personal', label: 'Personal', desc: 'Profile + social links' },
@@ -74,6 +74,7 @@ export default function NewCard() {
   const [wifiPassword, setWifiPassword] = useState('');
   const [wifiEncryption, setWifiEncryption] = useState<'WPA2' | 'WPA' | 'WEP' | 'NONE'>('WPA2');
   const [wifiHidden, setWifiHidden] = useState(false);
+  const [wifiFrame, setWifiFrame] = useState<WifiFrame>('classic');
 
   const [destinationUrl, setDestinationUrl] = useState('');
 
@@ -93,6 +94,7 @@ export default function NewCard() {
       if (typeof d.wifiPassword === 'string') setWifiPassword(d.wifiPassword);
       if (typeof d.wifiEncryption === 'string') setWifiEncryption(d.wifiEncryption);
       if (typeof d.wifiHidden === 'boolean') setWifiHidden(d.wifiHidden);
+      if (typeof d.wifiFrame === 'string') setWifiFrame(d.wifiFrame as WifiFrame);
       if (typeof d.destinationUrl === 'string') setDestinationUrl(d.destinationUrl);
 
       if (!selectedType && d.lastType) {
@@ -110,7 +112,7 @@ export default function NewCard() {
         DRAFT_KEY,
         JSON.stringify({
           active, name, jobTitle, bio, links, newKind, newUrl,
-          wifiSsid, wifiPassword, wifiEncryption, wifiHidden, destinationUrl,
+          wifiSsid, wifiPassword, wifiEncryption, wifiHidden, wifiFrame, destinationUrl,
           lastType: selectedType,
         })
       );
@@ -118,7 +120,7 @@ export default function NewCard() {
     } catch {
       // ignore
     }
-  }, [active, name, jobTitle, bio, links, newKind, newUrl, wifiSsid, wifiPassword, wifiEncryption, wifiHidden, destinationUrl, selectedType]);
+  }, [active, name, jobTitle, bio, links, newKind, newUrl, wifiSsid, wifiPassword, wifiEncryption, wifiHidden, wifiFrame, destinationUrl, selectedType]);
 
   const formTitle = useMemo(() => {
     return types.find((t) => t.type === selectedType)?.label ?? 'New QR';
@@ -175,7 +177,7 @@ export default function NewCard() {
     const created = await createMyCard({
       qrType: 'wifi',
       name: name.trim() || `Wi-Fi: ${wifiSsid.trim()}`,
-      bio: payload,
+      bio: encodeWifiMeta({ payload, frame: wifiFrame }),
       active,
       links: [],
       wifi: {
@@ -185,6 +187,8 @@ export default function NewCard() {
         hidden: wifiHidden,
       },
     });
+
+    console.info('[analytics] qr_published', { qr_type: 'wifi', frame: wifiFrame });
 
     router.push(`/app/cards/edit/?id=${encodeURIComponent(created.id)}`);
   }
@@ -207,9 +211,9 @@ export default function NewCard() {
     const created = await createMyCard({
       qrType: 'url_forward',
       name: name.trim(),
-      bio: bio.trim() || undefined,
+      bio: encodeUrlForwardMeta(destination),
       active,
-      links: [{ kind: 'website', url: destination }],
+      links: [{ kind: 'website', url: destination, label: bio.trim() || undefined }],
       urlForward: { destinationUrl: destination },
     });
 
@@ -336,6 +340,21 @@ export default function NewCard() {
                   <label className="inline-flex items-center gap-2 text-sm text-white/85">
                     <input type="checkbox" checked={wifiHidden} onChange={(e) => setWifiHidden(e.target.checked)} /> Hidden SSID
                   </label>
+                  <div>
+                    <div className="text-sm text-white/80 mb-2">Border / Frame</div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {(['classic', 'rounded', 'minimal', 'bold'] as WifiFrame[]).map((frame) => (
+                        <button
+                          key={frame}
+                          type="button"
+                          onClick={() => setWifiFrame(frame)}
+                          className={`rounded-xl border px-3 py-2 text-sm capitalize ${wifiFrame === frame ? 'bg-[color:var(--qrlife-purple)] border-white/30' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                        >
+                          {frame}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </>
               )}
 
