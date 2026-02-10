@@ -19,7 +19,11 @@ export default function QrCardsPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="text-2xl font-bold">QR Cards</div>
-          <div className="text-white/70">All of your synced cards</div>
+          <div className="text-white/70">
+            {process.env.NEXT_PUBLIC_DISABLE_AUTH_FOR_TEST === 'true'
+              ? 'Cloud sync requires login (currently in local-only test mode)'
+              : 'All of your synced cards'}
+          </div>
         </div>
         <Link href="/app/cards/new/" className="rounded-2xl px-4 py-2 bg-white/10 hover:bg-white/15">
           + Add QR Card

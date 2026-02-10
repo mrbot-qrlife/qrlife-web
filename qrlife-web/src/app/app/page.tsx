@@ -59,7 +59,12 @@ export default function AppHome() {
       </div>
 
       <div className="mt-8 text-xs text-white/50">
-        Storage: <span className="text-emerald-300">Cloud sync enabled</span>
+        Storage:{' '}
+        {process.env.NEXT_PUBLIC_DISABLE_AUTH_FOR_TEST === 'true' ? (
+          <span className="text-amber-300">Local-only mode (auth disabled for testing)</span>
+        ) : (
+          <span className="text-emerald-300">Cloud sync enabled</span>
+        )}
       </div>
 
       <BottomNav />

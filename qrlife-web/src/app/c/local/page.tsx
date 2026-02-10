@@ -92,7 +92,7 @@ export default function PublicCardPage({ params }: { params: { id: string } }) {
             <div className="rounded-2xl bg-white/5 border border-white/10 p-4 text-white/75">
               <div className="font-semibold">This QR Card isn’t available on this device yet.</div>
               <div className="mt-2 text-xs text-white/55">
-                MVP note: cards are currently stored locally in the browser that created them. Cloud sync is coming next.
+                MVP note: this <b>local demo card</b> is stored only in this browser. Signed-in cards are stored in the cloud.
               </div>
               <div className="mt-4">
                 <Link href="/app/" className="inline-flex rounded-xl px-4 py-2 bg-white/10 hover:bg-white/15 text-sm">
