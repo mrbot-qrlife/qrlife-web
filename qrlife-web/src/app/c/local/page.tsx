@@ -5,7 +5,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { SocialIcon } from '@/components/SocialIcon';
-import { getCard, recordLocalScan, type QrCard, type SocialKind } from '@/lib/storage';
+import { getCard, recordLocalScan, type QrCard } from '@/lib/storage';
 
 export default function PublicCardPage({ params }: { params: { id: string } }) {
   const id = params?.id ?? '';

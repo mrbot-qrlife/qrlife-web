@@ -14,7 +14,7 @@ function normalizeUrl(input: string): string {
   return s;
 }
 
-async function safeBrowsingCheck(_url: string): Promise<{ ok: boolean; mode: 'warn' | 'block'; reason?: string }> {
+async function safeBrowsingCheck(): Promise<{ ok: boolean; mode: 'warn' | 'block'; reason?: string }> {
   // MVP: WARN mode until key/backend is wired.
   // Later: call a server-side endpoint that uses Google Safe Browsing.
   return { ok: true, mode: 'warn', reason: 'Safe Browsing key not configured yet (WARN mode).' };
@@ -92,8 +92,7 @@ export default function ScanPage() {
     (async () => {
       if (!result) return;
       setCanOpen(false);
-      const url = normalizeUrl(result);
-      const check = await safeBrowsingCheck(url);
+      const check = await safeBrowsingCheck();
       if (check.mode === 'warn') {
         setStatus(check.reason || 'Safety check not configured (WARN mode).');
         setCanOpen(true);

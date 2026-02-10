@@ -4,12 +4,16 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase/client';
 
+const AUTH_DISABLED = process.env.NEXT_PUBLIC_DISABLE_AUTH_FOR_TEST === 'true';
+
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!AUTH_DISABLED);
 
   useEffect(() => {
+    if (AUTH_DISABLED) return;
+
     let mounted = true;
     const sb = supabaseBrowser();
 
