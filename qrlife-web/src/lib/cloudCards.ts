@@ -1,5 +1,6 @@
 import { makeSlugCode } from '@/lib/slug';
 import { supabaseBrowser } from '@/lib/supabase/client';
+import { type QrType, type UrlForwardInput, type WifiInput, validateQrCreateInput } from '@/lib/qrCreate';
 
 export type SocialKind =
   | 'facebook'
@@ -71,12 +72,22 @@ export async function getMyCardLinks(cardId: string) {
 }
 
 export async function createMyCard(input: {
+  qrType?: QrType;
   name: string;
   jobTitle?: string;
   bio?: string;
   active: boolean;
   links: Array<{ kind: SocialKind; url: string; label?: string }>;
+  wifi?: WifiInput;
+  urlForward?: UrlForwardInput;
 }) {
+  validateQrCreateInput({
+    qrType: input.qrType ?? 'personal',
+    name: input.name,
+    wifi: input.wifi,
+    urlForward: input.urlForward,
+  });
+
   const sb = supabaseBrowser();
   const userId = await requireUserId();
 

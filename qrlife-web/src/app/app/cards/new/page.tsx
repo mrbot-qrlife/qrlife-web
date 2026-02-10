@@ -3,12 +3,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import Link from 'next/link';
-import { BottomNav } from "@/components/BottomNav";
+import { BottomNav } from '@/components/BottomNav';
 import { SocialIcon } from '@/components/SocialIcon';
-import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import { createMyCard, type SocialKind } from '@/lib/cloudCards';
+import { buildWifiPayload, isValidAbsoluteHttpUrl, type QrType } from '@/lib/qrCreate';
 
+const types: Array<{ type: QrType; label: string; desc: string }> = [
+  { type: 'personal', label: 'Personal', desc: 'Profile + social links' },
+  { type: 'business', label: 'Business', desc: 'Business profile + links' },
+  { type: 'influencer', label: 'Influencer', desc: 'Creator profile + links' },
+  { type: 'event_campaign', label: 'Event/Campaign', desc: 'Campaign destination card' },
+  { type: 'wifi', label: 'Wi-Fi', desc: 'Connect guests to Wi-Fi quickly' },
+  { type: 'url_forward', label: 'URL Forward', desc: 'Track then redirect to destination URL' },
+];
 
 const kinds: Array<{ kind: SocialKind; label: string; placeholder: string }> = [
   { kind: 'facebook', label: 'Facebook', placeholder: 'https://facebook.com/yourpage' },
@@ -20,9 +29,38 @@ const kinds: Array<{ kind: SocialKind; label: string; placeholder: string }> = [
   { kind: 'website', label: 'Website', placeholder: 'https://example.com' },
 ];
 
+const DRAFT_KEY = 'qrlife.newcard.draft.v2';
+const LAST_TYPE_KEY = 'qrlife.newcard.lasttype';
+
+function normalizeLinkInput(kind: SocialKind, raw: string) {
+  let v = raw.trim();
+  if (!v) return '';
+  if (v.startsWith('@')) v = v.slice(1);
+
+  const hasScheme = /^https?:\/\//i.test(v);
+  const looksLikeDomain = /\./.test(v) || v.includes('/');
+  if (hasScheme) return v;
+
+  if (looksLikeDomain && !['tiktok', 'x', 'instagram', 'youtube', 'facebook', 'linkedin'].includes(kind)) {
+    return `https://${v}`;
+  }
+
+  switch (kind) {
+    case 'instagram': return `https://instagram.com/${v}`;
+    case 'x': return `https://x.com/${v}`;
+    case 'tiktok': return `https://tiktok.com/@${v}`;
+    case 'youtube': return `https://youtube.com/@${v}`;
+    case 'facebook': return `https://facebook.com/${v}`;
+    case 'linkedin': return v.startsWith('company/') || v.startsWith('in/') ? `https://linkedin.com/${v}` : `https://linkedin.com/in/${v}`;
+    case 'website': return `https://${v}`;
+    default: return looksLikeDomain ? `https://${v}` : v;
+  }
+}
+
 export default function NewCard() {
   const router = useRouter();
-  const DRAFT_KEY = 'qrlife.newcard.draft.v1';
+  const search = useSearchParams();
+  const selectedType = (search.get('type') as QrType | null) ?? null;
 
   const [active, setActive] = useState(true);
   const [name, setName] = useState('');
@@ -30,12 +68,15 @@ export default function NewCard() {
   const [bio, setBio] = useState('');
   const [links, setLinks] = useState<Array<{ kind: SocialKind; url: string }>>([]);
   const [newKind, setNewKind] = useState<SocialKind>('facebook');
-  const [kindOpen, setKindOpen] = useState(false);
-  const [kindOpenUp, setKindOpenUp] = useState(false);
-  const kindBtnRef = useRef<HTMLButtonElement | null>(null);
   const [newUrl, setNewUrl] = useState('');
 
-  // Draft persistence: prevents losing fields if the page refreshes or remounts.
+  const [wifiSsid, setWifiSsid] = useState('');
+  const [wifiPassword, setWifiPassword] = useState('');
+  const [wifiEncryption, setWifiEncryption] = useState<'WPA2' | 'WPA' | 'WEP' | 'NONE'>('WPA2');
+  const [wifiHidden, setWifiHidden] = useState(false);
+
+  const [destinationUrl, setDestinationUrl] = useState('');
+
   useEffect(() => {
     try {
       const raw = window.sessionStorage.getItem(DRAFT_KEY);
@@ -48,6 +89,15 @@ export default function NewCard() {
       if (Array.isArray(d.links)) setLinks(d.links);
       if (typeof d.newKind === 'string') setNewKind(d.newKind as SocialKind);
       if (typeof d.newUrl === 'string') setNewUrl(d.newUrl);
+      if (typeof d.wifiSsid === 'string') setWifiSsid(d.wifiSsid);
+      if (typeof d.wifiPassword === 'string') setWifiPassword(d.wifiPassword);
+      if (typeof d.wifiEncryption === 'string') setWifiEncryption(d.wifiEncryption);
+      if (typeof d.wifiHidden === 'boolean') setWifiHidden(d.wifiHidden);
+      if (typeof d.destinationUrl === 'string') setDestinationUrl(d.destinationUrl);
+
+      if (!selectedType && d.lastType) {
+        router.replace(`/app/cards/new?type=${encodeURIComponent(d.lastType)}`);
+      }
     } catch {
       // ignore
     }
@@ -58,252 +108,253 @@ export default function NewCard() {
     try {
       window.sessionStorage.setItem(
         DRAFT_KEY,
-        JSON.stringify({ active, name, jobTitle, bio, links, newKind, newUrl })
+        JSON.stringify({
+          active, name, jobTitle, bio, links, newKind, newUrl,
+          wifiSsid, wifiPassword, wifiEncryption, wifiHidden, destinationUrl,
+          lastType: selectedType,
+        })
       );
+      if (selectedType) window.sessionStorage.setItem(LAST_TYPE_KEY, selectedType);
     } catch {
       // ignore
     }
-  }, [active, name, jobTitle, bio, links, newKind, newUrl]);
+  }, [active, name, jobTitle, bio, links, newKind, newUrl, wifiSsid, wifiPassword, wifiEncryption, wifiHidden, destinationUrl, selectedType]);
 
-  function normalizeLinkInput(kind: SocialKind, raw: string) {
-    let v = raw.trim();
-    if (!v) return '';
-
-    // Accept bare handles like @mrchris or mrchris
-    if (v.startsWith('@')) v = v.slice(1);
-
-    // If it already looks like a URL, keep it (but add https:// if missing).
-    const hasScheme = /^https?:\/\//i.test(v);
-    const looksLikeDomain = /\./.test(v) || v.includes('/');
-    if (hasScheme) return v;
-
-    // If user pasted a domain/path without scheme, assume https.
-    if (looksLikeDomain && kind !== 'tiktok' && kind !== 'x' && kind !== 'instagram' && kind !== 'youtube' && kind !== 'facebook' && kind !== 'linkedin') {
-      return `https://${v}`;
-    }
-
-    // Kind-based handle expansion
-    switch (kind) {
-      case 'instagram':
-        return `https://instagram.com/${v}`;
-      case 'x':
-        return `https://x.com/${v}`;
-      case 'tiktok':
-        return `https://tiktok.com/@${v}`;
-      case 'youtube':
-        // Accept @handle or channel URL fragment
-        return `https://youtube.com/@${v}`;
-      case 'facebook':
-        return `https://facebook.com/${v}`;
-      case 'linkedin':
-        // default to personal profile
-        return v.startsWith('company/') || v.startsWith('in/')
-          ? `https://linkedin.com/${v}`
-          : `https://linkedin.com/in/${v}`;
-      case 'website':
-        return `https://${v}`;
-      default:
-        return looksLikeDomain ? `https://${v}` : v;
-    }
-  }
-
-  function previewUrl() {
-    const url = normalizeLinkInput(newKind, newUrl);
-    if (!url) return;
-    window.open(url, '_blank', 'noopener,noreferrer');
-  }
+  const formTitle = useMemo(() => {
+    return types.find((t) => t.type === selectedType)?.label ?? 'New QR';
+  }, [selectedType]);
 
   function addLink() {
     const url = normalizeLinkInput(newKind, newUrl);
     if (!url) return;
-
-    // Allow multiple links per network, but prevent exact duplicates.
-    const dup = links.some((l) => l.kind === newKind && l.url === url);
-    if (dup) {
+    if (links.some((l) => l.kind === newKind && l.url === url)) {
       alert('That link is already added.');
       return;
     }
-
     setLinks((prev) => [...prev, { kind: newKind, url }]);
-
-    // Keep the input text so you can tweak it (e.g., add a second FB page).
-    // If you want it to clear instead later, we can add a toggle.
   }
 
-  async function save() {
+  function startWith(type: QrType) {
+    router.push(`/app/cards/new?type=${encodeURIComponent(type)}`);
+  }
+
+  async function saveShared() {
+    if (!selectedType) return;
     if (!name.trim()) {
-      alert('QR Card Name is required');
+      alert('Name is required');
       return;
     }
-
-    const trimmed = {
+    const created = await createMyCard({
+      qrType: selectedType,
       name: name.trim(),
       jobTitle: jobTitle.trim() || undefined,
       bio: bio.trim() || undefined,
       active,
       links,
-    };
+    });
+    router.push(`/app/cards/edit/?id=${encodeURIComponent(created.id)}`);
+  }
 
+  async function saveWifi() {
+    if (!wifiSsid.trim()) {
+      alert('Wi-Fi SSID is required');
+      return;
+    }
+    if (wifiEncryption !== 'NONE' && !wifiPassword.trim()) {
+      alert('Wi-Fi password is required unless encryption is NONE');
+      return;
+    }
+
+    const payload = buildWifiPayload({
+      ssid: wifiSsid.trim(),
+      password: wifiPassword,
+      encryption: wifiEncryption,
+      hidden: wifiHidden,
+    });
+
+    const created = await createMyCard({
+      qrType: 'wifi',
+      name: name.trim() || `Wi-Fi: ${wifiSsid.trim()}`,
+      bio: payload,
+      active,
+      links: [],
+      wifi: {
+        ssid: wifiSsid.trim(),
+        password: wifiPassword,
+        encryption: wifiEncryption,
+        hidden: wifiHidden,
+      },
+    });
+
+    router.push(`/app/cards/edit/?id=${encodeURIComponent(created.id)}`);
+  }
+
+  async function saveUrlForward() {
+    const destination = destinationUrl.trim();
+    if (!destination) {
+      alert('Destination URL is required');
+      return;
+    }
+    if (!isValidAbsoluteHttpUrl(destination)) {
+      alert('Destination URL must be a valid absolute http/https URL');
+      return;
+    }
+    if (!name.trim()) {
+      alert('Name is required');
+      return;
+    }
+
+    const created = await createMyCard({
+      qrType: 'url_forward',
+      name: name.trim(),
+      bio: bio.trim() || undefined,
+      active,
+      links: [{ kind: 'website', url: destination }],
+      urlForward: { destinationUrl: destination },
+    });
+
+    router.push(`/app/cards/edit/?id=${encodeURIComponent(created.id)}`);
+  }
+
+  async function onSave() {
     try {
-      const created = await createMyCard(trimmed);
-      try {
-        window.sessionStorage.removeItem(DRAFT_KEY);
-      } catch {
-        // ignore
-      }
-      router.push(`/app/cards/edit/?id=${encodeURIComponent(created.id)}`);
+      if (selectedType === 'wifi') return saveWifi();
+      if (selectedType === 'url_forward') return saveUrlForward();
+      return saveShared();
     } catch (e: any) {
       alert(e?.message ?? 'Failed to create card');
     }
   }
 
-  const placeholder = kinds.find((k) => k.kind === newKind)?.placeholder ?? 'https://...';
-
   return (
     <div className="min-h-dvh px-5 py-8 max-w-xl mx-auto">
       <Link href="/app/" className="text-white/70 hover:text-white">← Back</Link>
-      <h1 className="mt-4 text-2xl font-bold">New QR Card</h1>
 
-      <div className="mt-5 qrlife-card rounded-2xl">
-        <div className="px-4 py-3 bg-[color:var(--qrlife-purple)] flex items-center justify-between">
-          <div className="font-semibold">My Information</div>
-          <button
-            onClick={() => setActive((v) => !v)}
-            className={`h-6 w-11 rounded-full relative ${active ? 'bg-emerald-400/80' : 'bg-white/20'}`}
-            aria-label="Toggle active"
-          >
-            <div className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition-all ${active ? 'right-0.5' : 'left-0.5'}`} />
-          </button>
-        </div>
-
-        <div className="p-4 space-y-3">
-          <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="QR Card Name" />
-          <input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="Job Title (Optional)" />
-          <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3 min-h-28" placeholder="Bio (Optional)" />
-
-          <div className="pt-2">
-            <div className="flex items-center justify-between">
-              <div className="font-semibold">Social Networks</div>
-            </div>
-
-            <div className="mt-2 flex gap-2 items-stretch">
-              <div className="relative">
-                <button
-                  ref={kindBtnRef}
-                  type="button"
-                  onClick={() => {
-                    const next = !kindOpen;
-                    if (next) {
-                      // Decide whether to open upward based on viewport space
-                      const r = kindBtnRef.current?.getBoundingClientRect();
-                      if (r) {
-                        const spaceBelow = window.innerHeight - r.bottom;
-                        const spaceAbove = r.top;
-                        setKindOpenUp(spaceBelow < 320 && spaceAbove > spaceBelow);
-                      }
-                    }
-                    setKindOpen(next);
-                  }}
-                  className="h-full rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 px-3 py-2 inline-flex items-center gap-2"
-                  aria-haspopup="listbox"
-                  aria-expanded={kindOpen}
-                >
-                  <span className="text-white/90">
-                    <SocialIcon kind={newKind} size={16} />
-                  </span>
-                  <span className="text-sm">{kinds.find((k) => k.kind === newKind)?.label ?? newKind}</span>
-                  <span className="text-white/50 text-xs">▾</span>
-                </button>
-
-                {kindOpen && (
-                  <div
-                    className={`absolute z-10 w-56 rounded-2xl bg-slate-950/90 border border-white/10 shadow-2xl backdrop-blur max-h-80 overflow-y-auto overscroll-contain ${
-                      kindOpenUp ? 'bottom-full mb-2' : 'top-full mt-2'
-                    }`}
-                    role="listbox"
-                  >
-                    {kinds.map((k) => (
-                      <button
-                        key={k.kind}
-                        type="button"
-                        onClick={() => {
-                          setNewKind(k.kind);
-                          setKindOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2.5 inline-flex items-center gap-2 hover:bg-white/10 ${
-                          k.kind === newKind ? 'bg-white/10' : ''
-                        }`}
-                      >
-                        <span className="text-white/90">
-                          <SocialIcon kind={k.kind} size={16} />
-                        </span>
-                        <span className="text-sm text-white/90">{k.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <input
-                value={newUrl}
-                onChange={(e) => setNewUrl(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addLink();
-                  }
-                  if (e.key === 'Escape') {
-                    setKindOpen(false);
-                  }
-                }}
-                className="flex-1 rounded-xl bg-white/10 border border-white/10 px-3 py-2"
-                placeholder={placeholder}
-              />
+      {!selectedType && (
+        <>
+          <h1 className="mt-4 text-2xl font-bold">Choose QR Type</h1>
+          <div className="mt-4 space-y-3">
+            {types.map((t) => (
               <button
-                type="button"
-                onClick={previewUrl}
-                className="rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 px-4 py-2"
-                title="Open link in a new tab to test"
+                key={t.type}
+                onClick={() => startWith(t.type)}
+                className="w-full text-left rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 px-4 py-3"
               >
-                Test
+                <div className="font-semibold">{t.label}</div>
+                <div className="text-sm text-white/70">{t.desc}</div>
               </button>
-              <button type="button" onClick={addLink} className="rounded-xl bg-[color:var(--qrlife-purple)] px-4 py-2">
-                Add
-              </button>
-            </div>
-
-            {links.length > 0 && (
-              <div className="mt-3 space-y-2 text-sm">
-                {links.map((l, idx) => (
-                  <div key={idx} className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-white/85">
-                        {/* icon */}
-                        <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 border border-white/10">
-                          <SocialIcon kind={l.kind} size={16} />
-                        </span>
-                      </span>
-                      <div className="capitalize text-white/90">{l.kind}</div>
-                    </div>
-                    <div className="text-white/60 truncate max-w-[60%]">{l.url}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+            ))}
           </div>
+        </>
+      )}
 
-          <div className="pt-4 flex items-center justify-end gap-2">
-            <Link href="/app/" className="rounded-xl px-4 py-2 bg-white/10 hover:bg-white/15">Cancel</Link>
-            <button onClick={save} className="rounded-xl px-4 py-2 bg-[color:var(--qrlife-teal)] text-slate-950 font-semibold">
-              Save
+      {selectedType && (
+        <>
+          <div className="mt-4 flex items-center justify-between gap-2">
+            <h1 className="text-2xl font-bold">New {formTitle} QR</h1>
+            <button
+              type="button"
+              className="rounded-xl px-3 py-2 bg-white/10 hover:bg-white/15"
+              onClick={() => router.push('/app/cards/new')}
+            >
+              Change type
             </button>
           </div>
-        </div>
-      </div>
 
-      <div className="mt-6 text-xs text-white/60">
-        Safety check status: <span className="text-amber-300">WARN mode</span> (Safe Browsing key not configured yet)
-      </div>
+          <div className="mt-5 qrlife-card rounded-2xl">
+            <div className="px-4 py-3 bg-[color:var(--qrlife-purple)] flex items-center justify-between">
+              <div className="font-semibold">Configuration</div>
+              <button
+                onClick={() => setActive((v) => !v)}
+                className={`h-6 w-11 rounded-full relative ${active ? 'bg-emerald-400/80' : 'bg-white/20'}`}
+                aria-label="Toggle active"
+              >
+                <div className={`h-5 w-5 rounded-full bg-white absolute top-0.5 transition-all ${active ? 'right-0.5' : 'left-0.5'}`} />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-3">
+              {(selectedType === 'personal' || selectedType === 'business' || selectedType === 'influencer' || selectedType === 'event_campaign') && (
+                <>
+                  <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="Name" />
+                  <input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="Job Title (Optional)" />
+                  <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3 min-h-28" placeholder="Bio (Optional)" />
+
+                  <div className="pt-2">
+                    <div className="font-semibold">Social Networks</div>
+                    <div className="mt-2 flex gap-2 items-stretch">
+                      <select
+                        value={newKind}
+                        onChange={(e) => setNewKind(e.target.value as SocialKind)}
+                        className="rounded-xl bg-white/10 border border-white/10 px-3 py-2"
+                      >
+                        {kinds.map((k) => <option key={k.kind} value={k.kind}>{k.label}</option>)}
+                      </select>
+                      <input
+                        value={newUrl}
+                        onChange={(e) => setNewUrl(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addLink(); } }}
+                        className="flex-1 rounded-xl bg-white/10 border border-white/10 px-3 py-2"
+                        placeholder={kinds.find((k) => k.kind === newKind)?.placeholder ?? 'https://...'}
+                      />
+                      <button type="button" onClick={addLink} className="rounded-xl bg-[color:var(--qrlife-purple)] px-4 py-2">Add</button>
+                    </div>
+                    {links.length > 0 && (
+                      <div className="mt-3 space-y-2 text-sm">
+                        {links.map((l, idx) => (
+                          <div key={idx} className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-white/10 px-4 py-3">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 border border-white/10"><SocialIcon kind={l.kind} size={16} /></span>
+                              <div className="capitalize text-white/90">{l.kind}</div>
+                            </div>
+                            <div className="text-white/60 truncate max-w-[60%]">{l.url}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {selectedType === 'wifi' && (
+                <>
+                  <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="Display Name (Optional)" />
+                  <input value={wifiSsid} onChange={(e) => setWifiSsid(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="SSID (Required)" />
+                  <select value={wifiEncryption} onChange={(e) => setWifiEncryption(e.target.value as 'WPA2' | 'WPA' | 'WEP' | 'NONE')} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3">
+                    <option value="WPA2">WPA2</option>
+                    <option value="WPA">WPA</option>
+                    <option value="WEP">WEP</option>
+                    <option value="NONE">NONE</option>
+                  </select>
+                  <input
+                    value={wifiPassword}
+                    onChange={(e) => setWifiPassword(e.target.value)}
+                    className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3"
+                    placeholder={wifiEncryption === 'NONE' ? 'Password not required' : 'Password (Required)'}
+                    disabled={wifiEncryption === 'NONE'}
+                  />
+                  <label className="inline-flex items-center gap-2 text-sm text-white/85">
+                    <input type="checkbox" checked={wifiHidden} onChange={(e) => setWifiHidden(e.target.checked)} /> Hidden SSID
+                  </label>
+                </>
+              )}
+
+              {selectedType === 'url_forward' && (
+                <>
+                  <input value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="Name (Required)" />
+                  <input value={destinationUrl} onChange={(e) => setDestinationUrl(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3" placeholder="Destination URL (https://...)" />
+                  <textarea value={bio} onChange={(e) => setBio(e.target.value)} className="w-full rounded-xl bg-white/10 border border-white/10 px-4 py-3 min-h-20" placeholder="Notes (Optional)" />
+                </>
+              )}
+
+              <div className="pt-4 flex items-center justify-end gap-2">
+                <button type="button" onClick={() => router.push('/app/cards/new')} className="rounded-xl px-4 py-2 bg-white/10 hover:bg-white/15">Back to types</button>
+                <button onClick={onSave} className="rounded-xl px-4 py-2 bg-[color:var(--qrlife-teal)] text-slate-950 font-semibold">Save</button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       <BottomNav />
     </div>

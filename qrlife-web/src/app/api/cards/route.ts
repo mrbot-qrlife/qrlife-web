@@ -4,9 +4,11 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { supabaseServer } from '@/lib/supabase/server';
 import { makeSlugCode } from '@/lib/slug';
+import { validateQrCreateInput } from '@/lib/qrCreate';
 
 const BodySchema = z.object({
-  name: z.string().min(1).max(120),
+  qrType: z.enum(['personal', 'business', 'influencer', 'event_campaign', 'wifi', 'url_forward']).default('personal'),
+  name: z.string().max(120).default(''),
   jobTitle: z.string().max(120).optional().nullable(),
   bio: z.string().max(1000).optional().nullable(),
   active: z.boolean().default(true),
@@ -14,17 +16,40 @@ const BodySchema = z.object({
     .array(
       z.object({
         kind: z.string().min(1).max(24),
-        url: z.string().url().max(500),
+        url: z.string().max(500),
         label: z.string().max(120).optional().nullable(),
       })
     )
     .default([]),
+  wifi: z
+    .object({
+      ssid: z.string().default(''),
+      password: z.string().optional(),
+      encryption: z.enum(['WPA2', 'WPA', 'WEP', 'NONE']),
+      hidden: z.boolean().optional(),
+    })
+    .optional(),
+  urlForward: z
+    .object({
+      destinationUrl: z.string().default(''),
+    })
+    .optional(),
 });
 
 export async function POST(req: Request) {
   try {
     const json = await req.json();
     const body = BodySchema.parse(json);
+
+    validateQrCreateInput({
+      qrType: body.qrType,
+      name: body.name,
+      wifi: body.wifi,
+      urlForward: body.urlForward,
+    });
+
+    // Placeholder analytics pipeline: swap with a proper event sink later.
+    console.info('[analytics] create_started', { qr_type: body.qrType });
 
     const sb = supabaseServer();
 
