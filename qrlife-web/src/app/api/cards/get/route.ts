@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabaseServer } from '@/lib/supabase/server';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
@@ -14,13 +14,12 @@ export async function GET(req: Request) {
     let query = sb
       .from('qrlife_cards')
       .select('id,slug,name,job_title,bio,active')
-      .limit(1)
-      .maybeSingle();
+      .limit(1);
 
     if (id) query = query.eq('id', id);
     if (slug) query = query.eq('slug', slug);
 
-    const { data: card, error } = await query;
+    const { data: card, error } = await query.maybeSingle();
     if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     if (!card) return NextResponse.json({ ok: false, error: 'not found' }, { status: 404 });
 
