@@ -13,6 +13,14 @@
 - **Execution preference:** If a task can be done directly on-box, do it and then report what changed. For major changes, create a backup copy under a `backup/` folder first.
 - **Content workflow preference:** When MrChris says “give me the goods,” provide a full platform pack: YouTube, Facebook, TikTok, LinkedIn, and X.
 
+## Locked QRLife Deployment Stack (Do Not Change Unless Explicitly Requested)
+
+- **Repo/Source Control:** GitHub
+- **Hosting/Deploy:** AWS Amplify (NOT Vercel by default)
+- **Backend/Auth/DB:** Supabase
+- **Cloud Objective:** Run in AWS
+- **Rule for assistant:** Do not propose or switch to a different primary stack unless MrChris explicitly asks to change it.
+
 ## Context
 
 - Owns an app called qrlife.me (QRLife).
