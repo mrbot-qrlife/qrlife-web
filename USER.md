@@ -20,6 +20,7 @@
 - **Backend/Auth/DB:** Supabase
 - **Cloud Objective:** Run in AWS
 - **Rule for assistant:** Do not propose or switch to a different primary stack unless MrChris explicitly asks to change it.
+- **Domain rule (QRLife):** Do NOT move/connect the `qrlife.me` domain until the app is working and explicitly declared MVP-ready by MrChris.
 
 ## Context
 
