@@ -11,6 +11,7 @@
 - **Reminder default time:** 9:00 AM (America/New_York) when no time is specified
 - **Outbound email sender name:** MrBot (even though assistant nickname is lilchris)
 - **Execution preference:** If a task can be done directly on-box, do it and then report what changed. For major changes, create a backup copy under a `backup/` folder first.
+- **Content workflow preference:** When MrChris says “give me the goods,” provide a full platform pack: YouTube, Facebook, TikTok, LinkedIn, and X.
 
 ## Context
 
